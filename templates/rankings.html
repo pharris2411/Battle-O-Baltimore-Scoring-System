@@ -1,0 +1,57 @@
+
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<style>
+	ul.rankings{
+		list-style: none;
+	}
+	ul.rankings li{
+		display:block;
+		font-size:20px;
+		padding:10px 0px;
+		-webkit-transition:.5s ease all;
+		position:relative;
+	}
+	ul.rankings li:nth-child(even){
+		background-color:rgba(0,0,0,.1);
+	}
+	ul.rankings li span{
+		display:inline-block;
+		width:90px;
+	}
+</style>
+
+<ul class='rankings'>
+	<li class='fixed'>
+		<span>Rank</span>
+		<span>Team</span>
+		<span>QS</span>
+		<span>HP</span>
+		<span>BP</span>
+		<span>TP</span>
+		<span>CP</span>
+		<span>Record (W-L-T)</span>
+		<span>DQ</span>
+		<span>Played</span>
+	</li>
+{% for team, scores in rankings %}
+	<li id="team{{team}}">
+		<span>{{scores.Rank}}</span>
+		<span>{{team}}</span>
+		<span>{{scores.QS}}</span>
+		<span>{{scores.HP}}</span>
+		<span>{{scores.BP}}</span>
+		<span>{{scores.TP}}</span>
+		<span>{{scores.CP}}</span>
+		<span>({{scores.Wins}} - {{scores.Losses}} - {{scores.Ties}})</span>
+		<span>{{scores.DQ}}</span>
+		<span>{{scores.Played}}</span>
+	</li>
+{% endfor %}
+</ul>
+
+
+{% endblock %}

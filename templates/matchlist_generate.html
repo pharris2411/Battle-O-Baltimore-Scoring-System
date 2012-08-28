@@ -1,0 +1,17 @@
+
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<!--{{output}}-->
+
+<pre>
+{{rater_output}}
+</pre>
+
+<a href="javascript:document.location.reload(true)" class='btn btn-primary'>Regenerate</a>
+
+<a href="/matchlist_import" class='btn btn-primary'>Continue</a>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+
+
+<table>
+	<tr>
+		<th>Number</th>
+		<th>Time</th>
+		<th>Score</th>
+		<th>Red Team 1</th>
+		<th>Red Team 2</th>
+		<th>Red Team 3</th>
+		<th>Blue Team 1</th>
+		<th>Blue Team 2</th>
+		<th>Blue Team 3</th>
+	</tr>
+{% for match in matchlist %}
+	<tr>
+		<td>{{match.number}}</td>
+		<td>{{match.time}}</td>
+		<td>{{match.red_score}} to {{match.blue_score}}</td>
+		<td>{{match.red.team1.number}}</td>
+		<td>{{match.red.team2.number}}</td>
+		<td>{{match.red.team3.number}}</td>
+		<td>{{match.blue.team1.number}}</td>
+		<td>{{match.blue.team2.number}}</td>
+		<td>{{match.blue.team3.number}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}

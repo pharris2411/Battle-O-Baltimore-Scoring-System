@@ -1,0 +1,91 @@
+
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<script>
+$(document).ready(function(){
+	var currentTime = new Date();
+	var month = currentTime.getMonth() + 1;
+	var day = currentTime.getDate();
+	var year = currentTime.getFullYear();
+	
+	$("#date").val(month + "/" + day + "/" + year);
+
+	updateTimes();
+});
+
+function updateTimes(){
+	var date = $("#date").val();
+	var diff = $("#time_between_matches").val();
+	var start_time = $("#starting_time").val();
+
+	date = Date.parse(date + " " + start_time + ":00");
+
+	var date_loop = new Date();
+	date_loop.setTime(date);
+	console.log(date_loop);
+	
+	for(var i = 1; i <= $(".matchtime").length; i++){
+		date_loop.setTime(date);
+		$("input[name='m" + i + "time']").val(
+			(date_loop.getMonth()+1) + "/" +
+			date_loop.getDate() + "/" +
+			date_loop.getFullYear() + " " +
+			date_loop.getHours() + ":" +
+			date_loop.getMinutes()
+		);
+		date += diff * 60 * 1000;
+	}
+}
+</script>
+
+<label>
+	Date
+	<input type="text" id="date" onchange="updateTimes()"/>
+</label>
+
+<label>
+	Starting Time
+	<input type="text" id="starting_time" value="9:15" onchange="updateTimes()"/>
+</label>
+
+<label>
+	Time Between Matches (minutes)
+	<input type="number" id="time_between_matches" value="6" onchange="updateTimes()"/>
+</label>
+
+
+<form action="/matchlist_import" method="post">
+	{% csrf_token %}
+
+	<table class='table table-bordered table-striped'>
+		<tr>
+			<th>Number</th>
+			<th>Time</th>
+			<th>Red Team 1</th>
+			<th>Red Team 2</th>
+			<th>Red Team 3</th>
+			<th>Blue Team 1</th>
+			<th>Blue Team 2</th>
+			<th>Blue Team 3</th>
+		</tr>
+	{% for match in matchlist %}
+		<tr>
+			<td>{{match.number}}</td>
+			<td><input type="text" value="{{match.time}}" name="m{{match.number}}time" class="matchtime"/></td>
+			<td>{{match.red.team1.number}}</td>
+			<td>{{match.red.team2.number}}</td>
+			<td>{{match.red.team3.number}}</td>
+			<td>{{match.blue.team1.number}}</td>
+			<td>{{match.blue.team2.number}}</td>
+			<td>{{match.blue.team3.number}}</td>
+		</tr>
+	{% endfor %}
+	</table>
+
+	<input type='submit' class='btn btn-primary' value='Import it!' />
+
+</form>
+	{% endblock %} 

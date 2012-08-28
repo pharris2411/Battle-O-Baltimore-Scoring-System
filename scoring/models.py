@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Team(models.Model):
-	number = models.IntegerField(unique = True)
+	number = models.IntegerField(unique = True, primary_key=True)
 	name = models.CharField(max_length=200, blank = True)
 	sponsors = models.CharField(max_length=400, blank = True)
 	
@@ -13,21 +13,30 @@ class Team(models.Model):
 		return "%d - %s" % (self.number, self.name)
 
 class Match(models.Model):
-	number = models.IntegerField()
+	number = models.IntegerField(primary_key=True)
 
 	time = models.DateTimeField()
 
 	red_score = models.IntegerField(default = 0)
 	blue_score = models.IntegerField(default = 0)
 
-	red = models.ForeignKey('Scoring', related_name='red_alliance_match')
-	blue = models.ForeignKey('Scoring', related_name='blue_alliance_match')
+	red = models.ForeignKey('Scoring', related_name='red_alliance_match', on_delete=models.CASCADE)
+	blue = models.ForeignKey('Scoring', related_name='blue_alliance_match', on_delete=models.CASCADE)
 
 	played = models.BooleanField(default = False)
+
+	finals_match = models.BooleanField(default = False)
+
+	finals_id_1 = models.IntegerField(default=0, blank=True)
+	finals_id_2 = models.IntegerField(default=0, blank=True)
+	finals_id_3 = models.IntegerField(default=0, blank=True)
 
 	def __unicode__(self):
 		return "Match %d" % self.number
 	
+	def score(self):
+		self.red_score = self.red.score()
+		self.blue_score = self.blue.score()
 
 class Scoring(models.Model):
 	team1 = models.ForeignKey('Team', related_name='+')
@@ -53,8 +62,42 @@ class Scoring(models.Model):
 
 	coop = models.BooleanField(default = False)
 
+	final_red_ball = models.IntegerField(default = 0)
+
 	team1_disqualified = models.BooleanField(default = False)
 	team2_disqualified = models.BooleanField(default = False)
 	team3_disqualified = models.BooleanField(default = False)
 
 	penalties = models.IntegerField(default = 0)
+
+	def score_hybrid(self):
+		return self.hybrid_top*6 + self.hybrid_mid*5 + self.hybrid_low*4
+
+	def score_tele(self):
+		return self.tele_top*3 + self.tele_mid*2 + self.tele_low
+
+	def score(self):
+		score = 0
+
+		score += self.score_hybrid()
+		score += self.score_tele()
+		
+		# max of 20 points 
+		bridge_points = self.bridge * 10
+		if(bridge_points > 20):
+			bridge_points = 20
+		score += bridge_points
+
+		score += (self.final_red_ball * 20)
+		score -= self.penalties
+
+		return score
+
+
+class Finals_Alliance(models.Model):
+	number = models.IntegerField(primary_key=True)
+
+	team1 = models.ForeignKey('Team', related_name='+')
+	team2 = models.ForeignKey('Team', related_name='+', blank = True)
+	team3 = models.ForeignKey('Team', related_name='+', blank = True)
+	team4 = models.ForeignKey('Team', related_name='+', blank = True)
