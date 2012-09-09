@@ -1,0 +1,179 @@
+
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<script>
+	
+	$.expr[':'].textEquals = function(a, i, m) {
+return $(a).text().match("^" + m[3] + "$");
+};
+
+	$(function() {
+		$( "li" ).draggable({
+			// appendTo: "body"
+			revert: "invalid"
+		});
+
+		$( "#pool ul, .alliance ul" ).droppable({
+			// activeClass: "ui-state-default",
+			// hoverClass: "ui-state-hover",
+			accept: "li",
+			drop: function( event, ui ) {
+				$(ui.draggable).remove();
+				$( "<li class='team'>" + ui.draggable.text() + "</li>" ).appendTo( this );
+				setupDragEvents();
+				setupPlaceholders();
+				addInputs();
+			}
+		})
+
+		setupDragEvents();
+		setupPlaceholders();
+		addInputs();
+		removeDuplicates();
+	});
+
+	function setupDragEvents(){
+		$( " li" ).draggable({
+			// appendTo: "body"
+			revert: "invalid"
+		});
+	}
+
+	function setupPlaceholders(){
+		$(".alliance ul").each(function(){
+			if($(this).children("li.team").length == 0)
+				$( this ).find( ".placeholder" ).show();
+			else
+				$( this ).find( ".placeholder" ).hide();
+		});
+	}
+	function addInputs(){
+		$(".alliance ul").each(function(){
+			alliance = $(this).attr("data-alliance");
+			
+			$(this).children("li.team").each(function(index){
+				$(this).find("input").remove();
+				$(this).append("<input type='hidden' value='" + $(this).text() + "' name='a" + alliance + "t" + (index + 1) + "' />");
+			});
+		});
+	}
+
+	function removeDuplicates(){
+		$(".alliance li.team").each(function(){
+			number = $(this).text();
+			$("#pool li").filter(function (index) { return $(this).text() == number;}).remove();
+			
+		});
+	}
+	</script>
+
+
+<form action="/edit_alliances" method="post">
+	{% csrf_token %}
+
+
+<style>
+#pool{
+	position:absolute;
+	right:0;
+	top:50px;
+	border:1px solid #ccc;
+	padding:10px 30px 10px 10px;
+
+}
+.alliance{
+	display:inline-block;
+	height:150px;
+	width:150px;
+	border:1px solid #ccc;
+	padding:10px;
+	margin:10px;
+
+}
+
+
+#pool ul,
+.alliance ul{
+	margin:0;
+	float:left;
+}
+
+#pool li,
+.alliance li{
+	cursor:pointer;
+	list-style:none;
+	
+	
+	font-size:16px;
+}
+li.team:hover{
+	background:#ccf;
+}
+.saved_timestamp{
+	font-size:16px;
+	padding:10px;
+	
+	-webkit-animation: fadeout 2s ease;
+}
+
+@-webkit-keyframes fadeout {
+   from { background-color: #afa; }
+   to   { background-color: #fff; }
+}
+
+</style>
+
+{% if saved %}
+	<div class='saved_timestamp'>
+		Updated at {{time}}
+	</div>
+{% endif %}
+
+<div id="products">
+	<div id="pool">
+		<h3>Teams</h3>
+		<div>
+			<ul>
+			{% for team, scores in rankings %}
+				<li class='team'>{{team}}</li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+</div>
+
+
+
+<div style='width:800px'>
+{% for alliance in alliances %}
+	<div class='alliance'>
+		<h3>Alliance {{alliance.number}}</h3>
+		<div>
+			<ul data-alliance='{{alliance.number}}'>
+				<li class="placeholder">Add your items here</li>
+				{% if alliance.team1 %}
+					<li class='team'>{{alliance.team1.number}}</li>
+				{% endif %}
+				{% if alliance.team2 %}
+					<li class='team'>{{alliance.team2.number}}</li>
+				{% endif %}
+				{% if alliance.team3 %}
+					<li class='team'>{{alliance.team3.number}}</li>
+				{% endif %}
+				{% if alliance.team4 %}
+					<li class='team'>{{alliance.team4.number}}</li>
+				{% endif %}
+			</ul>
+		</div>
+	</div>
+{% endfor %}
+</div>
+
+
+	<input type='submit' class='btn btn-primary' value='Save it!' />
+
+</form>
+	{% endblock %} 

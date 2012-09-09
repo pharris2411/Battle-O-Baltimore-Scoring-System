@@ -12,7 +12,7 @@ def calculate_rankings():
 	
 	#p = get_object_or_404(Poll, pk=poll_id)
 	teams = Team.objects.all()
-	matches = Match.objects.all()
+	matches = Match.objects.filter(played=True).filter(finals_match=False)
 
 	rankings = {}
 	for team in teams:
@@ -124,17 +124,16 @@ def calculate_rankings():
 		return 0
 
 	sorted_rankings.sort(cmp=sort_rankings)
-	print sorted_rankings
 
 	return sorted_rankings
-	#return render_to_response('rankings.html', {"rankings": teams})
+	
 
 def rankings(request):
 	rankings = calculate_rankings()
 	return render_to_response('rankings.html', {"rankings": rankings})
 
 def matchlist(request):
-	matchlist = Match.objects.all()
+	matchlist = Match.objects.filter(finals_match=False)
 	return render_to_response('matchlist.html', {"matchlist": matchlist})
 
 def edit_team(request):
@@ -157,17 +156,66 @@ def edit_match(request, matchid):
 
 	return render_to_response('edit_match.html', {'form': form}, context_instance=RequestContext(request))
 
-	match = get_object_or_404(Match, pk=match)
-	return render_to_response('edit_match.html', {"match": match})
 
 def edit_match_scoring(request, matchid, side):
-	return render_to_response('edit_match_scoring.html')
+	c = {}
+	c.update(csrf(request))
+	matchid = int(matchid)
+	match = get_object_or_404(Match, pk=matchid)
+
+	if side == 'blue':
+		scores = match.blue
+		c['side'] = 'blue'
+		c['otherside'] = 'red'
+	elif side == 'red':
+		scores = match.red
+		c['side'] = 'red'
+		c['otherside'] = 'blue'
+
+	if request.method == 'POST': 
+		scores.hybrid_top = int(request.POST['hybrid_top'])
+		scores.hybrid_mid = int(request.POST['hybrid_midl']) + int(request.POST['hybrid_midr'])
+		scores.hybrid_low = int(request.POST['hybrid_low'])
+
+		scores.tele_top = int(request.POST['tele_top'])
+		scores.tele_mid = int(request.POST['tele_midl']) + int(request.POST['tele_midr'])
+		scores.tele_low = int(request.POST['tele_low'])
+
+		scores.save()
+		c['saved'] = True
+
+	if Match.objects.filter(number=matchid+1).exists():
+		c['nextmatch'] = matchid + 1
+	if Match.objects.filter(number=matchid-1).exists():
+		c['prevmatch'] = matchid - 1
+	
+	c['currentmatch'] = matchid
+	c['played'] = match.played
+	c['scores'] = scores
+
+	return render_to_response('edit_match_scoring.html', c)
+
+def view_match_scoring_json(request, matchid, side):
+	import json
+	from django.forms import model_to_dict
+	match = get_object_or_404(Match, pk=matchid)
+
+	if side == "red":
+		scores =  match.red
+	if side == "blue":
+		scores = match.blue
+
+	if scores:
+		dict_scores = model_to_dict(scores)
+		dict_scores['played'] = match.played
+		dict_scores['score'] = scores.score();
+		return HttpResponse(json.dumps(dict_scores), mimetype="application/json")
+	
+	return HttpResponse(json.dumps("Error!"), mimetype="application/json")
 
 def matchlist_generate(request):
 	import subprocess
 	import os
-
-	
 
 	try:
 		root_path = os.path.dirname(os.path.realpath(__file__))
@@ -264,5 +312,44 @@ def matchlist_import(request):
 
 	return render_to_response('matchlist_import.html', c)
 
+def edit_alliances(request):
+	from time import localtime, strftime
+	c = {}
+	c.update(csrf(request))
+
+	alliances = Finals_Alliance.objects.all()
+	rankings = calculate_rankings()
+
+	alliance_list = []
+
+	if len(alliances) == 0:
+		# need to make a bunch
+		for i in range(1,9):
+			alliance = Finals_Alliance()
+			alliance.number = i
+			# alliance.team1 = rankings[i-0].
+			alliance_list.append(alliance)
+	else:
+		alliance_list = alliances
+
+
+	if request.method == 'POST':
+		for alliance in alliance_list:
+			alliance.team1 = Team.objects.get(number=int(request.POST['a%dt1' % alliance.number])) if 'a%dt1' % alliance.number in request.POST else None
+			alliance.team2 = Team.objects.get(number=int(request.POST['a%dt2' % alliance.number])) if 'a%dt2' % alliance.number in request.POST else None
+			alliance.team3 = Team.objects.get(number=int(request.POST['a%dt3' % alliance.number])) if 'a%dt3' % alliance.number in request.POST else None
+			alliance.team4 = Team.objects.get(number=int(request.POST['a%dt4' % alliance.number])) if 'a%dt4' % alliance.number in request.POST else None
+			alliance.save()
+		c['saved'] = True
+	else:
+		c['saved'] = False
+
+	c['rankings'] = rankings
+	c['alliances'] = alliance_list
+	c['time'] = strftime("%I:%M:%S %p", localtime())
+	return render_to_response('edit_alliances.html', c)
+
 def homepage(request):
-	return render_to_response('home.html')
+	# matchlist = Match.objects.all()
+	# return render_to_response('home.html', {"matchlist": matchlist})
+	return matchlist(request)

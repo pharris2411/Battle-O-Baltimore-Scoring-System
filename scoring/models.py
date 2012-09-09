@@ -9,6 +9,8 @@ class Team(models.Model):
 	yellowcard = models.BooleanField(default = False)
 	redcard = models.BooleanField(default = False)
 
+	updated = models.DateTimeField(auto_now=True, null=True)
+
 	def __unicode__(self):
 		return "%d - %s" % (self.number, self.name)
 
@@ -30,6 +32,8 @@ class Match(models.Model):
 	finals_id_1 = models.IntegerField(default=0, blank=True)
 	finals_id_2 = models.IntegerField(default=0, blank=True)
 	finals_id_3 = models.IntegerField(default=0, blank=True)
+
+	updated = models.DateTimeField(auto_now=True, null=True)
 
 	def __unicode__(self):
 		return "Match %d" % self.number
@@ -70,6 +74,8 @@ class Scoring(models.Model):
 
 	penalties = models.IntegerField(default = 0)
 
+	updated = models.DateTimeField(auto_now=True, null=True)
+
 	def score_hybrid(self):
 		return self.hybrid_top*6 + self.hybrid_mid*5 + self.hybrid_low*4
 
@@ -93,11 +99,29 @@ class Scoring(models.Model):
 
 		return score
 
+	def __unicode__(self):
+		# hacky solution, but it works.
+		match_red = Match.objects.filter(red = self.id)
+		if match_red:
+			return "Scores for match %d - red" % match_red[0].number
+		
+		match_blue = Match.objects.filter(blue = self.id)
+		if match_blue:
+			return "Scores for match %d - blue" % match_blue[0].number
+
+		return "Scores - associated match not found?"
+
+
 
 class Finals_Alliance(models.Model):
 	number = models.IntegerField(primary_key=True)
 
 	team1 = models.ForeignKey('Team', related_name='+')
-	team2 = models.ForeignKey('Team', related_name='+', blank = True)
-	team3 = models.ForeignKey('Team', related_name='+', blank = True)
-	team4 = models.ForeignKey('Team', related_name='+', blank = True)
+	team2 = models.ForeignKey('Team', related_name='+', blank = True, null=True)
+	team3 = models.ForeignKey('Team', related_name='+', blank = True, null=True)
+	team4 = models.ForeignKey('Team', related_name='+', blank = True, null=True)
+
+	updated = models.DateTimeField(auto_now=True, null=True)
+
+	def __unicode__(self):
+		return "Finals Alliance %d" % self.number

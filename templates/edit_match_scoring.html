@@ -4,16 +4,186 @@
 
 {% block content %}
 
-<form method="post" url="/edit_match_scoring/{{match.number}}">
+<form method="post" url="/edit_match_scoring/{{match.number}}" class='{{side}}'>
 
-	Hybrid
-	<input type='number'>
-	
+
+{% csrf_token %}
+
+<style>
+.field{
+	height:553px;
+	width:535px;
+	position:relative;
+}
+.red .field{
+	background-image: url("/assets/img/field-red.png");
+}
+.blue .field{
+	background-image: url("/assets/img/field-blue.png");
+}
+.blue .team_number{
+	color:blue;
+}
+.red .team_number{
+	color:red;
+}
+.match_number{
+	font-size:24px;
+	font-weight: bold;
+	margin:10px 0;
+}
+.team_number{
+	font-size: 16px;
+	padding-right:10px;
+}
+.match_info{
+	margin:10px;
+}
+.field input{
+	position:absolute;
+	width:58px;
+	height:40px;
+	font-size:32px;
+	text-align:center;
+	z-index: 1000;
+	box-shadow: 0 0 5px rgba(0,0,0,.5);
+}
+.field .field-top{
+	top:79px;
+	left:230px;
+}
+.field .field-midl{
+	top:237px;
+	left:112px;
+}
+.field .field-midr{
+	top:237px;
+	left:348px;
+}
+.field .field-low{
+	top:380px;
+	left:230px;
+}
+
+#hybrid::after,
+#tele::after{
+	content:"hybrid";
+	position: absolute;
+	font-size:192px;
+	top:220px;
+	left:0;
+	color:#000;
+	z-index:1;
+	text-shadow:0px 0px 15px white;
+	opacity:1;
+}
+
+#tele::after{
+	content: "tele";
+	top:200px;
+	left:183px;
+	font-size:96px;
+}
+.thanks{
+	display:none;
+}
+</style>
+
+
+
+
+
+
+<div class='match_info'>
+
+	<div class='match_number'>Match #{{ currentmatch }}</div>
+
+
+
+	<span class='team_number'>{{scores.team1.number}}</span>
+	<span class='team_number'>{{scores.team2.number}}</span>
+	<span class='team_number'>{{scores.team3.number}}</span>
 
 	<div>
-		<input type='submit' class='btn btn-primary'/>
+		{% if prevmatch %}
+			<a href="/edit_match_scoring/{{ prevmatch }}/{{side}}" class='btn'>Previous Match</a>
+		{% endif %}
+
+		{% if nextmatch %}
+			<a href="/edit_match_scoring/{{ nextmatch }}/{{side}}" class='btn'>Next Match</a>
+		{% endif %}
+
+		<a href="/edit_match_scoring/{{ currentmatch }}/{{otherside}}" class='btn btn-warning'>Switch Sides</a>
+
+		{% if saved %}
+			<div class='btn btn-danger' onclick="$('.scoring').show();$(this).hide();">Edit Scores</div>
+		{% endif %}
 	</div>
+
+</div>
+
+{% if saved %}
+	<style>
+		.scoring{
+			display:none;
+		}
+		.thanks{
+			display:block;
+		}
+	</style>
+
+{% endif %}
+
+<div class='scoring'>
+	{% if not played %}
+		<ul class="nav nav-tabs" id="myTab">
+		  <li class="active"><a href="#hybrid">Hybrid</a></li>
+		  <li><a href="#tele">Tele</a></li>
+		  <li><a href="#endgame">End Game</a></li>
+		</ul>
+		 
+		<div class="tab-content">
+		  <div class="tab-pane active field" id="hybrid">
+		  		<input type='number' min='0' max='99' class="field-top"  value="{{scores.hybrid_top}}" name="hybrid_top">
+				<input type='number' min='0' max='99' class="field-midl" value="{{scores.hybrid_mid}}" name="hybrid_midl">
+				<input type='number' min='0' max='99' class="field-midr" value="0"                     name="hybrid_midr">
+				<input type='number' min='0' max='99' class="field-low"  value="{{scores.hybrid_low}}" name="hybrid_low">
+		  </div>
+		  <div class="tab-pane field" id="tele">
+		  		<input type='number' min='0' max='99' class="field-top"  value="{{scores.tele_top}}" name="tele_top">
+				<input type='number' min='0' max='99' class="field-midl" value="{{scores.tele_mid}}" name="tele_midl">
+				<input type='number' min='0' max='99' class="field-midr" value="0"                   name="tele_midr">
+				<input type='number' min='0' max='99' class="field-low"  value="{{scores.tele_low}}" name="tele_low">
+		  </div>
+		  <div class="tab-pane" id="endgame">
+				<label><input type="checkbox" name="coop">Co-opertion Bridge</label>
+
+				<input type='number' name="final_red_ball">
+		  </div>
+		</div>
+		 
+		<script>
+		  $(function () {
+		    // $('#myTab a:last').tab('show');
+		    $('#myTab a').click(function (e) {
+			  e.preventDefault();
+			  $(this).tab('show');
+			})
+		  })
+
+		  $('input').attr('autocomplete','off');
+		</script>
+
+		<div>
+			<input type='submit' class='btn btn-primary' value='Save Scores'/>
+		</div>
+	{% else %}
+		This match has been marked as played, and the score cannot be changed with this interface. Check with the admin if you need to make a correction.
+	{% endif %}
+</div>
+
 </form>
 
+{{scores.updated}}
 
 {% endblock %}

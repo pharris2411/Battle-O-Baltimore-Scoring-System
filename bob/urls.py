@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     (r'^matchlist_import$', 'scoring.views.matchlist_import'),
     (r'^edit_match/(.*)$', 'scoring.views.edit_match'),
     (r'^edit_match_scoring/(\d+)/(.*)$', 'scoring.views.edit_match_scoring'),
+    (r'^view_match_scoring_json/(\d+)/(.*)$', 'scoring.views.view_match_scoring_json'),
+    (r'^edit_alliances$', 'scoring.views.edit_alliances'),
     (r'^$', 'scoring.views.homepage'),
    
 )

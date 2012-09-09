@@ -6,8 +6,7 @@
 
 
 
-
-<table>
+<table class='table table-bordered table-striped '>
 	<tr>
 		<th>Number</th>
 		<th>Time</th>
@@ -21,7 +20,7 @@
 	</tr>
 {% for match in matchlist %}
 	<tr>
-		<td>{{match.number}}</td>
+		<td><a href="edit_match/{{match.number}}">{{match.number}}</a></td>
 		<td>{{match.time}}</td>
 		<td>{{match.red_score}} to {{match.blue_score}}</td>
 		<td>{{match.red.team1.number}}</td>
