@@ -16,10 +16,20 @@
 	position:relative;
 }
 .red .field{
-	background-image: url("/assets/img/field-red.png");
+	/*background-image: url("/assets/img/field-red.png");*/
 }
 .blue .field{
-	background-image: url("/assets/img/field-blue.png");
+	/*background-image: url("/assets/img/field-blue.png");*/
+}
+.red .field input{
+	box-shadow: 0 0 0 10px black, 0 0 0 20px gray, 0 0 0 30px black, 0 0 0 45px #eee, 0 0 0 55px red, 0 0 5px 55px #333;
+	border-radius:0;
+	padding:0 20px;
+}
+.blue .field input{
+	box-shadow: 0 0 0 10px black, 0 0 0 20px gray, 0 0 0 30px black, 0 0 0 45px #eee, 0 0 0 55px blue, 0 0 5px 55px #333;
+	border-radius:0;
+	padding:0 20px;
 }
 .blue .team_number{
 	color:blue;
@@ -46,10 +56,11 @@
 	font-size:32px;
 	text-align:center;
 	z-index: 1000;
-	box-shadow: 0 0 5px rgba(0,0,0,.5);
+
 }
+
 .field .field-top{
-	top:79px;
+	top:70px;
 	left:230px;
 }
 .field .field-midl{
@@ -61,7 +72,7 @@
 	left:348px;
 }
 .field .field-low{
-	top:380px;
+	top:405px;
 	left:230px;
 }
 
@@ -75,17 +86,25 @@
 	color:#000;
 	z-index:1;
 	text-shadow:0px 0px 15px white;
-	opacity:1;
+	opacity:.2;
 }
 
 #tele::after{
 	content: "tele";
-	top:200px;
-	left:183px;
+	top:0;
+	left:0;
 	font-size:96px;
+	text-shadow:1px 1px 5px black;
+	-webkit-transform:rotate(-45deg);
 }
 .thanks{
 	display:none;
+}
+.keybindings{
+	width:300px;
+	position:fixed;
+	right:0;
+	top:100px;
 }
 </style>
 
@@ -96,7 +115,7 @@
 
 <div class='match_info'>
 
-	<div class='match_number'>Match #{{ currentmatch }}</div>
+	<div class='match_number'>{{currentmatch}}</div>
 
 
 
@@ -106,17 +125,17 @@
 
 	<div>
 		{% if prevmatch %}
-			<a href="/edit_match_scoring/{{ prevmatch }}/{{side}}" class='btn'>Previous Match</a>
+			<a href="/edit_match_scoring/{{ prevmatch }}/{{side}}" class='btn' id='prevmatch'>Previous Match</a>
 		{% endif %}
 
 		{% if nextmatch %}
-			<a href="/edit_match_scoring/{{ nextmatch }}/{{side}}" class='btn'>Next Match</a>
+			<a href="/edit_match_scoring/{{ nextmatch }}/{{side}}" class='btn' id="nextmatch">Next Match</a>
 		{% endif %}
 
-		<a href="/edit_match_scoring/{{ currentmatch }}/{{otherside}}" class='btn btn-warning'>Switch Sides</a>
+		<a href="/edit_match_scoring/{{ currentmatch.number }}/{{otherside}}" class='btn btn-warning'>Switch Sides</a>
 
 		{% if saved %}
-			<div class='btn btn-danger' onclick="$('.scoring').show();$(this).hide();">Edit Scores</div>
+			<div class='btn btn-danger' onclick="$('.scoring').show();$(this).hide(); $('.keybindings .game').show(); $('.keybindings .non-game').hide(); $('.keybindings .endgame').hide(); ">Edit Scores</div>
 		{% endif %}
 	</div>
 
@@ -130,8 +149,20 @@
 		.thanks{
 			display:block;
 		}
+		.keybindings .game{
+			display:none;
+		}
 	</style>
-
+{% else %}
+<style>
+		
+		.keybindings .non-game{
+			display:none;
+		}
+		.keybindings .endgame{
+			display:none;
+		}
+	</style>
 {% endif %}
 
 <div class='scoring'>
@@ -144,21 +175,34 @@
 		 
 		<div class="tab-content">
 		  <div class="tab-pane active field" id="hybrid">
-		  		<input type='number' min='0' max='99' class="field-top"  value="{{scores.hybrid_top}}" name="hybrid_top">
-				<input type='number' min='0' max='99' class="field-midl" value="{{scores.hybrid_mid}}" name="hybrid_midl">
-				<input type='number' min='0' max='99' class="field-midr" value="0"                     name="hybrid_midr">
-				<input type='number' min='0' max='99' class="field-low"  value="{{scores.hybrid_low}}" name="hybrid_low">
+		  		<input type='number' min='0' max='99' class="field-top"  value="{{scores.hybrid_top}}" name="hybrid_top"  id="hybrid_top">
+				<input type='number' min='0' max='99' class="field-midl" value="{{scores.hybrid_mid}}" name="hybrid_midl" id="hybrid_midl">
+				<input type='number' min='0' max='99' class="field-midr" value="0"                     name="hybrid_midr" id="hybrid_midr">
+				<input type='number' min='0' max='99' class="field-low"  value="{{scores.hybrid_low}}" name="hybrid_low"  id="hybrid_low">
 		  </div>
 		  <div class="tab-pane field" id="tele">
-		  		<input type='number' min='0' max='99' class="field-top"  value="{{scores.tele_top}}" name="tele_top">
-				<input type='number' min='0' max='99' class="field-midl" value="{{scores.tele_mid}}" name="tele_midl">
-				<input type='number' min='0' max='99' class="field-midr" value="0"                   name="tele_midr">
-				<input type='number' min='0' max='99' class="field-low"  value="{{scores.tele_low}}" name="tele_low">
+		  		<input type='number' min='0' max='99' class="field-top"  value="{{scores.tele_top}}" name="tele_top"  id="tele_top">
+				<input type='number' min='0' max='99' class="field-midl" value="{{scores.tele_mid}}" name="tele_midl" id="tele_midl">
+				<input type='number' min='0' max='99' class="field-midr" value="0"                   name="tele_midr" id="tele_midr">
+				<input type='number' min='0' max='99' class="field-low"  value="{{scores.tele_low}}" name="tele_low"  id="tele_low">
 		  </div>
 		  <div class="tab-pane" id="endgame">
-				<label><input type="checkbox" name="coop">Co-opertion Bridge</label>
+				
+				<label for='bridge'>Bridge Bots</label>
+				
+				<input type='number' name="bridge" min='0' max='3' value="{{scores.bridge}}" id='bridge'>
+				
 
-				<input type='number' name="final_red_ball">
+				
+
+
+				<label for='final_red_ball'>Final Red Ball(s)</label>
+				<input type='number' name="final_red_ball" id="final_red_ball" min='0' max='99' value='{{scores.final_red_ball}}'>
+
+				<label>
+					<input type="checkbox" name="coop" {% if scores.coop %} checked {% endif %} id="coop"> Co-opertion Bridge
+				</label>
+				
 		  </div>
 		</div>
 		 
@@ -169,21 +213,100 @@
 			  e.preventDefault();
 			  $(this).tab('show');
 			})
-		  })
 
-		  $('input').attr('autocomplete','off');
+			$(document).bind('keypress', 'w', function (evt){ increment('.active .field-top') });
+			$(document).bind('keypress', 'd', function (evt){ increment('.active .field-midr')  });
+			$(document).bind('keypress', 'a', function (evt){ increment('.active .field-midl')  });
+			$(document).bind('keypress', 's', function (evt){ increment('.active .field-low') });
+
+			$(document).bind('keypress', 'shift+w', function (evt){ decrement('.active .field-top') });
+			$(document).bind('keypress', 'shift+d', function (evt){ decrement('.active .field-midr')  });
+			$(document).bind('keypress', 'shift+a', function (evt){ decrement('.active .field-midl')  });
+			$(document).bind('keypress', 'shift+s', function (evt){ decrement('.active .field-low') });
+
+			$(document).bind('keypress', 'q', function (evt){ $('#myTab li:eq(0) a').tab('show'); $('.keybindings .hoops').show(); $('.keybindings .endgame').hide(); });
+			$(document).bind('keypress', 'e', function (evt){ $('#myTab li:eq(1) a').tab('show'); $('.keybindings .hoops').show(); $('.keybindings .endgame').hide(); });
+			$(document).bind('keypress', 'r', function (evt){ $('#myTab li:eq(2) a').tab('show'); $('.keybindings .hoops').hide(); $('.keybindings .endgame').show(); });
+
+			$(document).bind('keypress', 'b', function (evt){ cycleBridge() });
+			$(document).bind('keypress', 'c', function (evt){ toggleCoop() });
+
+			$(document).bind('keypress', 'f', function (evt){ increment('.active #final_red_ball') });
+			$(document).bind('keypress', 'shift+f', function (evt){ decrement('.active #final_red_ball') });
+			$('input').attr('autocomplete','off');
+		  });
+
+		function increment(target){
+			$(target).val(parseInt($(target).val()) + 1);
+			return false;
+		}
+
+		function decrement(target){
+			var value = parseInt($(target).val()) - 1;
+			if(value < 0)
+				value = 0;
+			$(target).val(value);
+		}
+
+		function cycleBridge(){
+			target = ".active #bridge";
+			var value = parseInt($(target).val()) + 1;
+			if(value > 3)
+				value = 0;
+			$(target).val(value);
+		}
+
+		function toggleCoop(){
+			$(".active #coop").prop('checked', ! $(".active #coop").prop("checked"));
+		}
+
+		 
 		</script>
 
-		<div>
+		<div style='margin:10px 0;'>
 			<input type='submit' class='btn btn-primary' value='Save Scores'/>
 		</div>
+
+		
 	{% else %}
 		This match has been marked as played, and the score cannot be changed with this interface. Check with the admin if you need to make a correction.
 	{% endif %}
 </div>
 
+<script>
+		  $(function () {
+		  		$(document).bind('keypress', ',', function (evt){ window.location.href = $('#prevmatch').attr('href'); });
+		  		$(document).bind('keypress', '.', function (evt){ window.location.href = $('#nextmatch').attr('href'); });
+		  	});
+</script>
+
+<div class='keybindings'>
+	<table class='table table-bordered table-striped'>
+		<tr>
+			<th>Key</th>
+			<th>Action</th>
+		</tr>
+		<tr class='non-game'><td>.</td><td>Next Match</td></tr>
+		<tr class='non-game'><td>,</td><td>Previous Match</td></tr>
+		<tr class='game '><td>Q</td><td>Hybrid Tab</td></tr>
+		<tr class='game '><td>E</td><td>Tele Tab</td></tr>
+		<tr class='game '><td>R</td><td>End Game Tab</td></tr>
+		<tr class='game hoops'><td>W</td><td>Increment Top</td></tr>
+		<tr class='game hoops'><td>A</td><td>Increment Mid Left</td></tr>
+		<tr class='game hoops'><td>S</td><td>Increment Bottom</td></tr>
+		<tr class='game hoops'><td>D</td><td>Increment Mid Right</td></tr>
+		<tr class='game hoops'><td>Shift + W</td><td>Decrement Top</td></tr>
+		<tr class='game hoops'><td>Shift + A</td><td>Decrement Mid Left</td></tr>
+		<tr class='game hoops'><td>Shift + S</td><td>Decrement Bottom</td></tr>
+		<tr class='game hoops'><td>Shift + D</td><td>Decrement Mid Right</td></tr>
+		<tr class='game endgame'><td>B</td><td>Cycle Bridge Bots (0-3)</td></tr>
+		<tr class='game endgame'><td>F</td><td>Increment Final Red Ball</td></tr>
+		<tr class='game endgame'><td>Shift+F</td><td>Decrement Final Red Ball</td></tr>
+		<tr class='game endgame'><td>C</td><td>Toggle Co-opertition</td></tr>
+	</table>
+</div>
 </form>
 
-{{scores.updated}}
+<!-- {{scores.updated}} -->
 
 {% endblock %}

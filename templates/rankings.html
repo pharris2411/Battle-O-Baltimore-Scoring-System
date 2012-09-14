@@ -39,7 +39,7 @@
 	</li>
 {% for team, scores in rankings %}
 	<li id="team{{team}}">
-		<span>{{scores.Rank}}</span>
+		<span>{{forloop.counter}}</span>
 		<span>{{team}}</span>
 		<span>{{scores.QS}}</span>
 		<span>{{scores.HP}}</span>

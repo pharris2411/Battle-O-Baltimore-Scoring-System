@@ -136,6 +136,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'scoring',
+    'scoring.templatetags',
+    'runcpserver',
 )
 
 # A sample logging configuration. The only tangible logging

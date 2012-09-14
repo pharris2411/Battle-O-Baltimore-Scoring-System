@@ -33,9 +33,14 @@ class Match(models.Model):
 	finals_id_2 = models.IntegerField(default=0, blank=True)
 	finals_id_3 = models.IntegerField(default=0, blank=True)
 
+	finals_red_alliance = models.ForeignKey('Finals_Alliance', related_name='+', blank = True, null=True)
+	finals_blue_alliance = models.ForeignKey('Finals_Alliance', related_name='+', blank = True, null=True)
+
 	updated = models.DateTimeField(auto_now=True, null=True)
 
 	def __unicode__(self):
+		if self.finals_match:
+			return "Match %d - %s Finals %d match %d" % (self.number, ("", "Quarter", "Semi", "")[self.finals_id_1], self.finals_id_2, self.finals_id_3)
 		return "Match %d" % self.number
 	
 	def score(self):
@@ -44,8 +49,8 @@ class Match(models.Model):
 
 class Scoring(models.Model):
 	team1 = models.ForeignKey('Team', related_name='+')
-	team2 = models.ForeignKey('Team', related_name='+', blank = True)
-	team3 = models.ForeignKey('Team', related_name='+', blank = True)
+	team2 = models.ForeignKey('Team', related_name='+', blank = True, null=True)
+	team3 = models.ForeignKey('Team', related_name='+', blank = True, null=True)
 
 	hybrid_top = models.IntegerField(default = 0)
 	hybrid_mid = models.IntegerField(default = 0)
@@ -76,25 +81,28 @@ class Scoring(models.Model):
 
 	updated = models.DateTimeField(auto_now=True, null=True)
 
+	submitted = models.BooleanField(default = False)
+
 	def score_hybrid(self):
 		return self.hybrid_top*6 + self.hybrid_mid*5 + self.hybrid_low*4
 
 	def score_tele(self):
-		return self.tele_top*3 + self.tele_mid*2 + self.tele_low
+		return self.tele_top*3 + self.tele_mid*2 + self.tele_low + self.final_red_ball * 20
+
+	def score_bridge(self):
+		# max of 20 points 
+		bridge_points = self.bridge * 10
+		if(bridge_points > 20):
+			bridge_points = 20
+		return bridge_points
 
 	def score(self):
 		score = 0
 
 		score += self.score_hybrid()
 		score += self.score_tele()
-		
-		# max of 20 points 
-		bridge_points = self.bridge * 10
-		if(bridge_points > 20):
-			bridge_points = 20
-		score += bridge_points
+		score += self.score_bridge()
 
-		score += (self.final_red_ball * 20)
 		score -= self.penalties
 
 		return score
@@ -110,6 +118,15 @@ class Scoring(models.Model):
 			return "Scores for match %d - blue" % match_blue[0].number
 
 		return "Scores - associated match not found?"
+
+	def team_numbers(self):
+		# returns a list of the team numbers
+		list = ["%d" % self.team1.number]
+		if self.team2:
+			list.append("%d" % self.team2.number)
+		if self.team3:
+			list.append("%d" % self.team3.number)
+		return list
 
 
 

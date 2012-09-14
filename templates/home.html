@@ -4,34 +4,31 @@
 
 {% block content %}
 
-
-
-<table class='table table-bordered table-striped '>
-	<tr>
-		<th>Number</th>
-		<th>Time</th>
-		<th>Score</th>
-		<th>Red Team 1</th>
-		<th>Red Team 2</th>
-		<th>Red Team 3</th>
-		<th>Blue Team 1</th>
-		<th>Blue Team 2</th>
-		<th>Blue Team 3</th>
-	</tr>
-{% for match in matchlist %}
-	<tr>
-		<td><a href="edit_match/{{match.number}}">{{match.number}}</a></td>
-		<td>{{match.time}}</td>
-		<td>{{match.red_score}} to {{match.blue_score}}</td>
-		<td>{{match.red.team1.number}}</td>
-		<td>{{match.red.team2.number}}</td>
-		<td>{{match.red.team3.number}}</td>
-		<td>{{match.blue.team1.number}}</td>
-		<td>{{match.blue.team2.number}}</td>
-		<td>{{match.blue.team3.number}}</td>
-	</tr>
-{% endfor %}
-</table>
-
+<style>
+	ul li{
+		list-style: none;
+		margin:5px 0 5px 20px;
+	}
+	ul li.step{
+		font-size:24px;
+		margin-left:0;
+		margin-top:20px;
+		border-bottom: 1px solid #ccc;
+	}
+</style>
+<ul>
+	<li class='step'>Step 1</li>
+	<li>Add Teams</li>
+	<li class='step'>Step 2</li>
+	<li>Generate and Import Match List</li>
+	<li class='step'>Step 3</li>
+	<li>Play all the matches</li>
+	<li class='step'>Step 4</li>
+	<li>Select alliances and enter them in the system, then create the initial 4 finals matches</li>
+	<li class='step'>Step 5</li>
+	<li>Play the finals matches, new matches will auto populate in the match list as needed</li>
+	<li class='step'>Step 6</li>
+	<li>Declare winner</li>
+</ul>
 
 {% endblock %}

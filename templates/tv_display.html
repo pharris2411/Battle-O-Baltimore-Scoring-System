@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <title>Battle O' Baltimore Scoring System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/assets/css/redmond/jquery-ui-1.8.23.custom.css" rel="stylesheet">
+    <script src="/assets/js/jquery.js"></script>
+    <script src="/assets/js/bootstrap.js"></script>
+    <script src="/assets/js/jquery-ui-1.8.23.custom.min.js"></script>
+    <script src="/assets/js/jquery.hotkeys.js"></script>
+
+  <style type="text/css">
+body {
+  background-image: url(/assets/img/baltimore.jpg);
+  background-repeat: no-repeat;
+  background-color: #161410;
+  font-family:Arial, Helvetica, sans-serif;
+}
+body,td,th {
+  color: #FFFFFF;
+}
+table{
+}
+.matchteams {
+  padding: 0;
+  border: 2px solid white;
+  text-align: center;
+  font-size: 28px;
+  color: #FFFFFF;
+  background:#333333;
+  /*opacity:.90;*/
+}
+
+.matchteams tr td {
+  border: 1px solid white;
+  padding: 5px;
+  color: white;
+}
+
+.matchteams a {
+  color: white;
+  text-decoration:none;
+}
+.redwin{
+  background: #ff4444;
+}
+.bluwin {
+  background: #4444ff;
+}
+.tie{
+  background: #909;
+}
+.matchscore {
+  background: white;
+  font-weight: bold;
+}
+.big {
+font-size:30px;
+}
+#rankingsholder, #matchlistholder{
+  overflow:hidden;
+    border-right: 2px solid white;
+    border-style: none solid solid;
+    border-width: medium 2px 2px;
+    height: 800px;
+    /*opacity: 0.9;*/
+    overflow: hidden;
+    padding-top: 1px;
+    width: 896px;
+    background-color:#333;
+}
+#matchlistholder{
+  overflow:hidden;
+  height:800px;
+  width:900px;
+}
+#matchlistholder table{
+  position:relative;
+}
+ul li span{
+  display:inline-block;
+  min-width:20px;
+  border: 1px solid white;
+  padding:5px;
+  font-size:28px;
+  color:white;
+  /*margin:1px;*/
+  text-align:center;
+}
+ul{
+list-style:none;
+margin:0;
+position:relative;
+padding:0;
+}
+ul li{
+    width: 900px;
+}
+#matchlistheader{
+  display:block;
+  width:900px;
+  border-right: 2px solid white;
+    border-style: solid solid none solid;
+    border-width: 2px 2px 2px;
+  height:46px;
+  background-color:#333;
+  
+}
+
+#matchlistheader span{
+  float:left;
+}
+.ml-team1, .ml-team2, .ml-team3, .ml-team4, .ml-team5, .ml-team6{
+  width: 76px;
+}
+.ml-3teams{
+  width:250px;
+}
+.ml-num{
+  width:100px;
+}
+.ml-time{
+  width:132px;
+}
+.ml-score{
+  width:108px;
+}
+.ml-team3{
+  width:74px;
+}
+.ml-team6{
+  width:74px;
+}
+#matchlistfloat{
+  float:left;
+  margin-left:40px;
+  box-shadow:0px 0px 35px black;
+}
+#rankingsfloat{
+  float:right;
+  margin-right:40px;
+  box-shadow:0px 0px 35px black;
+}
+#matchlist,
+#rankings{
+  top:0;
+  -webkit-transition:top .3s ease;
+}
+#matchlistholder,
+#rankingsholder{
+  opacity:.9;
+}
+</style>
+
+  <script type="text/javascript">
+  $(function(){
+    $.getJSON("/json_rankings", function(data){ processRankings(data) });
+    setInterval('$.getJSON("/json_rankings", function(data){ processRankings(data) });', 10000);
+    setInterval('$.getJSON("/json_matchlist", function(data){ processMatchlist(data) });', 10000);
+    setInterval(scrollRankings, 3000);
+    setInterval(scrollMatchlist, 3000);
+    
+    $.getJSON("/json_matchlist", function(data){ processMatchlist(data) });
+  });
+  
+  var numTeams = 0;
+  
+  function applyWidths(){
+    $(".rr-rank").width($("#rankingsheader td:eq(0)").width()-1);
+    $(".rr-team").width($("#rankingsheader td:eq(1)").width());
+    $(".rr-qp").width($("#rankingsheader td:eq(2)").width());
+    $(".rr-hp").width($("#rankingsheader td:eq(3)").width());
+    $(".rr-bp").width($("#rankingsheader td:eq(4)").width());
+    $(".rr-tp").width($("#rankingsheader td:eq(5)").width());
+    $(".rr-cp").width($("#rankingsheader td:eq(6)").width());
+
+    $(".rr-wins").width($("#rankingsheader td:eq(7)").width());
+    $(".rr-played").width($("#rankingsheader td:eq(8)").width());
+    
+  }
+  
+  
+  function processMatchlist(data){
+    var i = 1;
+    var k = 1;
+    //$("#matchlist").html("<tr><td><strong>Match #</strong></td><td><strong>Time</strong></td><td><strong>Score</strong></td><td colspan='3'><strong>Red Alliance</strong></td><td colspan='3'><strong>Blue Alliance</strong></td></tr>");
+    $("#matchlist").html("");
+    while(k < 3){
+    for(var index in data){
+      match = data[index];
+      var rowclass = "unplayed";
+      if(match.played == true){
+        if(match.red_score > match.blue_score)
+          rowclass = "redwin";
+        if(match.red_score < match.blue_score)
+          rowclass = "bluwin";
+        if(match.red_score == match.blue_score)
+          rowclass = "tie";
+      }
+      
+      var formatted_time_ms = Date.parse(match.time);
+      var formatted_time_date = new Date();
+      formatted_time_date.setTime(formatted_time_ms);
+      
+      var formatted_time = "";
+      var ampm = " AM";
+      var hours = formatted_time_date.getHours();
+      var minutes = formatted_time_date.getMinutes();
+
+      if(hours >= 12){
+        hours = hours - 12;
+        ampm = " PM";
+      }
+      if(hours == 0)
+        hours = 12;
+
+      if(minutes < 10)
+        minutes = "0" + minutes;
+
+      formatted_time = hours + ":" + minutes + ampm;
+      // formatted_time += ampm;
+
+      var str = "<li id='mlrow" + i + "' class='" + rowclass + "'>";
+      str += "<span class='ml-num'>" + (parseInt(index)+1) + "</span>";
+      str += "<span class='ml-time'>" + formatted_time + "</span>";
+      str += "<span class='ml-score'>";
+      if(match.played == true)
+        str += match.red_score + " - " + match.blue_score;
+      else
+        str += " - ";
+      str += "</span>";
+      str += "<span class='ml-team1'>" + match.red.team1 + "</span>";
+      str += "<span class='ml-team2'>" + match.red.team2 + "</span>";
+      str += "<span class='ml-team3'>" + match.red.team3 + "</span>";
+      str += "<span class='ml-team4'>" + match.blue.team1 + "</span>";
+      str += "<span class='ml-team5'>" + match.blue.team2 + "</span>";
+      str += "<span class='ml-team6'>" + match.blue.team3 + "</span>";
+      str += "</li>";
+      
+      $("#matchlist").append(str);
+      i++;
+    }
+    k++;
+    }
+    numTeams = (i-1)/2;
+    //applyMatchlistWidths();
+  
+  }
+  
+  function processRankings(data){
+    var i = 1;
+    var k = 1;
+    $("#rankings").html("");
+    while(k < 3){
+    for(var index in data){
+      // console.log(data[index]);
+      var str = "<li id='row" + i + "'>";
+      str += "<span class='rr-rank'>" + (parseInt(index)+1) + "</span>";
+      str += "<span class='rr-team'>" + data[index][0] + "</span>";
+      details = data[index][1];
+      str += "<span class='rr-qp'>" + details.QS + "</span>";
+      str += "<span class='rr-hp'>" + details.HP + "</span>";
+      str += "<span class='rr-bp'>" + details.BP + "</span>";
+      str += "<span class='rr-tp'>" + details.TP + "</span>";
+      str += "<span class='rr-cp'>" + details.CP + "</span>";
+
+      str += "<span class='rr-wins'>" + details.Wins + " - " + details.Losses + " - " + details.Ties + "</span>";
+      str += "<span class='rr-played'>" + details.Played + "</span>";
+      
+      
+      $("#rankings").append(str);
+      i++;
+    }
+    k++;
+    }
+    numTeams = (i-1)/2;
+    applyWidths();
+  }
+  
+  function scrollRankings(){
+    var curpos = parseInt($("#rankings").css("top"));
+    var offset = $("#rankings li").height();
+    if((curpos*-1) > (offset*numTeams)){
+      var newpos = ((curpos*-1) - (offset*(numTeams-3))) * -1;
+      //console.log("Need to reset position! Curpos ", curpos, " new pos ", newpos );
+      $("#rankings").css("top", newpos);
+    }
+    else
+       $("#rankings").css("top", "-=" + offset * 3);
+    //$("#rankings").animate({ top: ($("#rankings").css("top") - 100)});
+    
+    // $("#rankings").animate({ top: "-="+offset*3}, 1000);
+    // $("#rankings").css("top", + offset * 3);
+    
+  }
+  
+  function scrollMatchlist(){
+    var curpos = parseInt($("#matchlist").css("top"));
+    var offset = $("#matchlist li").height();
+    if((curpos*-1) > (offset*numTeams)){
+      var newpos = ((curpos*-1) - (offset*(numTeams-3))) * -1;
+      //console.log("Need to reset position! Curpos ", curpos, " new pos ", newpos );
+      $("#matchlist").css("top", newpos);
+    }
+    else
+      $("#matchlist").css("top", "-="+offset*3);
+    //$("#rankings").animate({ top: ($("#rankings").css("top") - 100)});
+    
+    // $("#matchlist").animate({ top: "-="+offset*3}, 1000);
+    // console.log(curpos,  curpos - (offset*3) + "px");
+
+    // $("#matchlist").css("top", (parseInt($('#matchlist').css('top')) - (offset*3)) + "px");
+    
+      
+  }
+</script>
+
+  </head>
+<body>
+  
+
+<div align="center">
+<img align="middle" src="/assets/img/battleobaltimore.png" /></div><br />
+<div id="myDiv">
+<div align="left">
+ 
+  <div id="matchlistfloat">
+  <ul id="matchlistheader">
+      <li>
+        <span class="ml-num">Match</span>
+        <span class="ml-time">Time</span>
+        <span class="ml-score">Score</span>
+        <span class="ml-3teams">Red Alliance</span>
+        <span class="ml-3teams">Blue Alliance</span.
+      </li>
+    </ul>
+  <div id="matchlistholder">
+    
+    <ul id="matchlist"></ul>
+  </div>
+  </div>
+  <div id="rankingsfloat">
+        
+        <table style="border-bottom:none;" width='900' class="matchteams" id="rankingsheader"><tr>
+    <td><strong onclick="scrollRankings()">Rank</strong></td>
+    <td><strong>Team</strong></td>
+    <td><strong>QS</strong></td>
+    <td><strong>HP</strong></td>
+    <td><strong>BP</strong></td>
+    <td><strong>TP</strong></td>
+    <td><strong>CP</strong></td>
+    <td><strong>Record (W-L-T)</strong></td>
+    <!-- <td><strong>DQ</strong></td> -->
+    <td><strong>Played</strong></td>
+
+    </tr>
+        </table>
+        <div id="rankingsholder">
+          <ul id="rankings"></ul>
+        </div>
+       </div>
+  </div>
+  </div>

@@ -130,6 +130,7 @@ li.team:hover{
 	<div class='saved_timestamp'>
 		Updated at {{time}}
 	</div>
+
 {% endif %}
 
 <div id="products">
@@ -173,7 +174,10 @@ li.team:hover{
 </div>
 
 
-	<input type='submit' class='btn btn-primary' value='Save it!' />
+	<input type='submit' class='btn btn-primary' value='Save Alliances' name='save_alliances'/>
 
+	{% if saved %}
+	 	<input type='submit' class='btn btn-warning' value="Generate Finals Schedule" name='generate_finals' />
+	{% endif %}
 </form>
 	{% endblock %} 

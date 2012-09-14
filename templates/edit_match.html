@@ -5,15 +5,166 @@
 {% block content %}
 
 
+<style>
+#ajaxred, #ajaxblue{
+	background-color:#222222;
+	border-radius:25px;
+	height: 150px;
+	width:250px;
+	color:white;
+	display:inline-block;
+	margin-right:10px;
+	padding-top:20px;
+	vertical-align: top;
+	text-align: center;
+	position:relative;
+}
+#ajaxred p, 
+#ajaxblue p{
+	font-size:24px;
+}
+#ajaxred a, 
+#ajaxblue a{
+ 	bottom:10px;
+ 	position: absolute;
+ 	left:50%;
+ 	margin-left:-40px;
+}
+#ajaxred a{
+	color:red;
+}
+#ajaxred span.checking, 
+#ajaxblue span.checking{
+	color:#666;
+	opacity:0;
+	display:block;
+	/*-webkit-transition: all .3s ease;*/
+}
+#ajaxred span.score{
+	color:#f00;
+	font-size:48px;
+	display:none;
+}
+#ajaxblue span.score{
+ 	color:#00f;
+ 	font-size:48px;
+ 	display:none;
+}
+.team_number.red{
+	color:red;
+}
+.team_number.blue{
+	color:blue;
+}
+.match_number{
+	font-size: 24px;
+	border-bottom:1px solid #ccc;
+	margin-bottom:10px;
+	padding:5px;
+}
+</style>
+
+<script>
+
+
+var scores = [];
+
+scores['red'] = Object();
+scores['red'].score = 0;
+scores['red'].received = false;
+scores['blue'] = Object();
+scores['blue'].score = 0;
+scores['blue'].received = false;
+
+function checkforScore(alliance, matchnumber){
+	var side = "red";
+	if(alliance == 2)
+		side = "blue";
+
+	var target = "#ajax" + side;
+
+	$(target + " span.checking").css('opacity', 1);
+
+	$.getJSON("/view_match_scoring_json/" + matchnumber + "/" + side, function(data){
+		// console.log(data);
+		if(data.submitted == true){
+
+			$(target + " p").text("Score recieved!");
+			$(target + " span.checking").css('opacity', 0);
+			$(target + " span.score").text(data.score).show();
+			
+			if(scores[side].received && scores[side].score != data.score){
+				// it was already received, but an update came in after
+				$(target + " p").text("Score updated!");
+			}
+			
+			scores[side].received = true;
+			scores[side].score = data.score;
+		}
+		else
+			$(target + " span.checking").animate({opacity: 0});
+
+		setTimeout("checkforScore(" + alliance + ", '" + matchnumber + "')", 5000);
+		
+	});
+}
+
+$(function(){
+	checkforScore(1, {{match.number}});
+	checkforScore(2, {{match.number}});
+});
+
+</script>
 
 <form method="post" url="/edit_match/{{match.number}}">
 
 {% csrf_token %}
 
-{{form}}
-{{match}}
+	<div class='match_number'>Match # {{ match.number}}</div>
 
 	<div>
+		<ul style='display:inline-block;margin-right:20px;'>
+			<li class='team_number red'>{{match.red.team1.number}}</li>
+			<li class='team_number red'>{{match.red.team2.number}}</li>
+			<li class='team_number red'>{{match.red.team3.number}}</li>
+		</ul>
+		vs.
+		<ul style='display:inline-block;margin-left:30px'>
+			<li class='team_number blue'>{{match.blue.team1.number}}</li>
+			<li class='team_number blue'>{{match.blue.team2.number}}</li>
+			<li class='team_number blue'>{{match.blue.team3.number}}</li>
+		</ul>
+	</div>
+
+	 <div id="ajaxred">
+	 	<p>Waiting for score</p>
+	 	<span class='checking'>Checking...</span>
+	 	<span class='score'></span>
+	 	<a href="/edit_match_scoring/{{match.number}}/red">Edit Scores</a>
+	 </div>
+
+	 <div id="ajaxblue">
+	 	<p>Waiting for score</p>
+	 	<span class='checking'>Checking...</span>
+	 	<span class='score'></span>
+	 	<a href="/edit_match_scoring/{{match.number}}/blue">Edit Scores</a>
+	 </div>
+
+	<div>
+		<label>Red Penalties<br>
+			<input type='number'  min='0' max='1000' value="{{match.red.penalties}}" name="red_penalties" />
+		</label>
+
+		<label>Blue Penalties<br>
+			<input type='number'  min='0' max='1000' value="{{match.blue.penalties}}" name="blue_penalties" />
+		</label>
+
+	</div>
+	<div style='margin:20px 0'>
+		<label><input type='checkbox' value='True' name='played' {% if match.played %} checked {% endif %}/> Match has been played (Publish scores)</label>
+	</div>
+
+	<div style='margin:20px 0'>
 		<input type='submit' class='btn btn-primary'/>
 	</div>
 </form>

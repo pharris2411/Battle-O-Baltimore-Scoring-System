@@ -4,10 +4,21 @@
 
 {% block content %}
 
+<style>
+tr.red{
+  background: rgba(255,0,0,.4);
+}
+tr.blue{
+  background: rgba(0,0,255,.3);
+}
+tr.tie{
+  background: rgba(255,0,255,.3);
+}
+</style>
 
 
 
-<table class='table table-bordered table-striped '>
+<table class='table table-bordered'>
 	<tr>
 		<th>Number</th>
 		<th>Time</th>
@@ -20,7 +31,17 @@
 		<th>Blue Team 3</th>
 	</tr>
 {% for match in matchlist %}
-	<tr>
+	{% if match.played %}
+		{% if match.red_score > match.blue_score %}
+			<tr class='red'>
+		{% elif match.red_score < match.blue_score %}
+			<tr class='blue'>
+		{% else %}
+			<tr class='tie'>
+		{% endif %}			
+	{% else %}
+		<tr>
+	{% endif %}
 		<td><a href="edit_match/{{match.number}}">{{match.number}}</a></td>
 		<td>{{match.time}}</td>
 		<td>{{match.red_score}} to {{match.blue_score}}</td>
@@ -31,6 +52,61 @@
 		<td>{{match.blue.team2.number}}</td>
 		<td>{{match.blue.team3.number}}</td>
 	</tr>
+{% endfor %}
+</table>
+
+<hr>
+
+<table class='table table-bordered'>
+	<tr>
+		<th>ID</th>
+		<th>Score</th>
+		<th>Red Team 1</th>
+		<th>Red Team 2</th>
+		<th>Red Team 3</th>
+		<th>Blue Team 1</th>
+		<th>Blue Team 2</th>
+		<th>Blue Team 3</th>
+	</tr>
+
+
+{% for fid1num, fid2 in bracket.items %}
+	{% for fid2num, fid3 in fid2.items %}
+		{% for fid3num, match in fid3.items %}
+			{% if match.played %}
+				{% if match.red_score > match.blue_score %}
+					<tr class='red'>
+				{% elif match.red_score < match.blue_score %}
+					<tr class='blue'>
+				{% else %}
+					<tr class='tie'>
+				{% endif %}			
+			{% else %}
+				<tr>
+			{% endif %}
+				<td><a href="edit_match/{{match.number}}">
+					{% if fid1num == 1 %}
+						Quarter
+					{% elif fid1num == 2 %}
+						Semi
+					{% endif %}
+					
+					Finals
+
+					{{ fid2num }}
+
+					Match #{{fid3num}}
+				</a></td>
+				<td>{{match.red_score}} to {{match.blue_score}}</td>
+				<td>{{match.red.team1.number}}</td>
+				<td>{{match.red.team2.number}}</td>
+				<td>{{match.red.team3.number}}</td>
+				<td>{{match.blue.team1.number}}</td>
+				<td>{{match.blue.team2.number}}</td>
+				<td>{{match.blue.team3.number}}</td>
+			</tr>
+		{% endfor %}
+	{% endfor %}
 {% endfor %}
 </table>
 
