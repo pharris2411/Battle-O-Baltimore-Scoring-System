@@ -317,10 +317,18 @@ def rankings(request):
 	rankings = calculate_rankings()
 	return render_to_response('rankings.html', {"rankings": rankings})
 
+def rankings_print(request):
+	rankings = calculate_rankings()
+	return render_to_response('rankings_print.html', {"rankings": rankings})
+
 def matchlist(request):
 	matchlist = Match.objects.filter(finals_match = False)
 	finals_bracket = calculate_finals(initialize = False, show_next_matches = True)
 	return render_to_response('matchlist.html', {"matchlist": matchlist, "bracket": finals_bracket})
+
+def matchlist_print(request):
+	matchlist = Match.objects.filter(finals_match = False)
+	return render_to_response('matchlist_print.html', {"matchlist": matchlist})
 
 def finals_bracket(request):
 	bracket = calculate_finals()

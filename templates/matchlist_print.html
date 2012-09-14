@@ -1,0 +1,57 @@
+
+{% block content %}
+
+<h1>Battle O' Baltimore Match List</h1>
+
+<style>
+table{
+	width:100%;
+	border-collapse: collapse;
+}
+td{
+	border:1px solid black;
+	padding: 5px 0 5px 5px;
+}
+</style>
+
+
+<table class='table table-bordered'>
+	<tr>
+		<th>Number</th>
+		<th>Time</th>
+		<!-- <th>Score</th> -->
+		<th>Red Team 1</th>
+		<th>Red Team 2</th>
+		<th>Red Team 3</th>
+		<th>Blue Team 1</th>
+		<th>Blue Team 2</th>
+		<th>Blue Team 3</th>
+	</tr>
+{% for match in matchlist %}
+	{% if match.played %}
+		{% if match.red_score > match.blue_score %}
+			<tr class='red'>
+		{% elif match.red_score < match.blue_score %}
+			<tr class='blue'>
+		{% else %}
+			<tr class='tie'>
+		{% endif %}			
+	{% else %}
+		<tr>
+	{% endif %}
+		<td>{{match.number}}</td>
+		<td>{{match.time|date:'P'}}</td>
+		<!-- <td>{{match.red_score}} to {{match.blue_score}}</td> -->
+		<td>{{match.red.team1.number}}</td>
+		<td>{{match.red.team2.number}}</td>
+		<td>{{match.red.team3.number}}</td>
+		<td>{{match.blue.team1.number}}</td>
+		<td>{{match.blue.team2.number}}</td>
+		<td>{{match.blue.team3.number}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+
+
+{% endblock %}

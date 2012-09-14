@@ -1,0 +1,48 @@
+
+
+
+{% block content %}
+<h1>Battle O' Baltimore Rankings</h1>
+
+<style>
+table{
+	width:100%;
+	border-collapse: collapse;
+}
+td{
+	border:1px solid black;
+	padding: 5px 0 5px 5px;
+}
+</style>
+
+<table>
+	<tr class='fixed'>
+		<td>Rank</td>
+		<td>Team</td>
+		<td>QS</td>
+		<td>HP</td>
+		<td>BP</td>
+		<td>TP</td>
+		<td>CP</td>
+		<td>Record (W-L-T)</td>
+		<td>DQ</td>
+		<td>Played</td>
+	</tr>
+{% for team, scores in rankings %}
+	<tr id="team{{team}}">
+		<td>{{forloop.counter}}</td>
+		<td>{{team}}</td>
+		<td>{{scores.QS}}</td>
+		<td>{{scores.HP}}</td>
+		<td>{{scores.BP}}</td>
+		<td>{{scores.TP}}</td>
+		<td>{{scores.CP}}</td>
+		<td>({{scores.Wins}} - {{scores.Losses}} - {{scores.Ties}})</td>
+		<td>{{scores.DQ}}</td>
+		<td>{{scores.Played}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}

@@ -11,7 +11,7 @@
 
 <style>
 .field{
-	height:553px;
+	height:508px;
 	width:535px;
 	position:relative;
 }
@@ -106,6 +106,10 @@
 	right:0;
 	top:100px;
 }
+#score span{
+	padding-left:20px;
+	color: #ccc;
+}
 </style>
 
 
@@ -116,7 +120,7 @@
 <div class='match_info'>
 
 	<div class='match_number'>{{currentmatch}}</div>
-
+	<div id="score">Score: {{scores.score}}</div>
 
 
 	<span class='team_number'>{{scores.team1.number}}</span>
@@ -238,6 +242,7 @@
 
 		function increment(target){
 			$(target).val(parseInt($(target).val()) + 1);
+			calculateScore();
 			return false;
 		}
 
@@ -246,6 +251,8 @@
 			if(value < 0)
 				value = 0;
 			$(target).val(value);
+			calculateScore();
+			return false;
 		}
 
 		function cycleBridge(){
@@ -254,13 +261,60 @@
 			if(value > 3)
 				value = 0;
 			$(target).val(value);
+			calculateScore();
 		}
 
 		function toggleCoop(){
 			$(".active #coop").prop('checked', ! $(".active #coop").prop("checked"));
 		}
 
-		 
+		function calculateScore(){
+			// def score_hybrid(self):
+			// 	return self.hybrid_top*6 + self.hybrid_mid*5 + self.hybrid_low*4
+
+			// def score_tele(self):
+			// 	return self.tele_top*3 + self.tele_mid*2 + self.tele_low + self.final_red_ball * 20
+
+			// def score_bridge(self):
+			// 	# max of 20 points 
+			// 	bridge_points = self.bridge * 10
+			// 	if(bridge_points > 20):
+			// 		bridge_points = 20
+			// 	return bridge_points
+
+			// def score(self):
+			// 	score = 0
+
+			// 	score += self.score_hybrid()
+			// 	score += self.score_tele()
+			// 	score += self.score_bridge()
+
+			// 	score -= self.penalties
+
+			// 	return score
+			var score = 0;
+			score += parseInt($("#hybrid_top").val()) * 6;
+			score += parseInt($("#hybrid_midr").val()) * 5;
+			score += parseInt($("#hybrid_midl").val()) * 5;
+			score += parseInt($("#hybrid_low").val()) * 4;
+
+			score += parseInt($("#tele_top").val()) * 3;
+			score += parseInt($("#tele_midr").val()) * 2;
+			score += parseInt($("#tele_midl").val()) * 2;
+			score += parseInt($("#tele_low").val()) * 1;
+
+			var bridge_points = 0;
+			bridge_points = parseInt($("#bridge").val()) * 10;
+			if(bridge_points > 20)
+				bridge_points = 20;
+			score += bridge_points;
+			score += parseInt($("#final_red_ball").val()) * 20;
+
+			$("#score").html("Score: " + score + "<span>(calculated, does not include penalties)</span>");
+
+			return score;
+
+		}
 		</script>
 
 		<div style='margin:10px 0;'>
