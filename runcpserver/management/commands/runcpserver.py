@@ -48,7 +48,7 @@ Examples:
 """
 
 CPSERVER_OPTIONS = {
-'host': '192.168.1.137',
+'host': '192.168.1.133',
 'port': 8088,
 'server_name': 'localhost',
 'threads': 10, 

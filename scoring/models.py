@@ -44,8 +44,9 @@ class Match(models.Model):
 		return "Match %d" % self.number
 	
 	def score(self):
-		self.red_score = self.red.score()
-		self.blue_score = self.blue.score()
+		self.red_score = self.red.score() + self.blue.penalties
+		self.blue_score = self.blue.score() + self.red.penalties
+		# self.save()
 
 class Scoring(models.Model):
 	team1 = models.ForeignKey('Team', related_name='+')
@@ -103,7 +104,7 @@ class Scoring(models.Model):
 		score += self.score_tele()
 		score += self.score_bridge()
 
-		score -= self.penalties
+		# score -= self.penalties
 
 		return score
 

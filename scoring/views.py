@@ -52,17 +52,20 @@ def calculate_rankings():
 	def add_team_win(rankings, match, scoring):
 		add_win(rankings, match, scoring.team1.number)
 		add_win(rankings, match, scoring.team2.number)
-		add_win(rankings, match, scoring.team3.number)
+		if scoring.team3:
+			add_win(rankings, match, scoring.team3.number)
 
 	def add_team_loss(rankings, match, scoring):
 		add_loss(rankings, match, scoring.team1.number)
 		add_loss(rankings, match, scoring.team2.number)
-		add_loss(rankings, match, scoring.team3.number)
+		if scoring.team3: 
+			add_loss(rankings, match, scoring.team3.number)
 
 	def add_team_tie(rankings, match, scoring):
 		add_tie(rankings, match, scoring.team1.number)
 		add_tie(rankings, match, scoring.team2.number)
-		add_tie(rankings, match, scoring.team3.number)
+		if scoring.team3: 
+			add_tie(rankings, match, scoring.team3.number)
 
 	
 
@@ -86,26 +89,33 @@ def calculate_rankings():
 		
 		add_all(rankings, match, red, red.team1.number)
 		add_all(rankings, match, red, red.team2.number)
-		add_all(rankings, match, red, red.team3.number)
+		if red.team3: 
+			add_all(rankings, match, red, red.team3.number)
 
 		add_all(rankings, match, blue, blue.team1.number)
 		add_all(rankings, match, blue, blue.team2.number)
-		add_all(rankings, match, blue, blue.team3.number)
+		if blue.team3: 
+			add_all(rankings, match, blue, blue.team3.number)
 
 		if red.coop and blue.coop:
 			rankings[red.team1.number]['CP'] += 2
 			rankings[red.team2.number]['CP'] += 2
-			rankings[red.team3.number]['CP'] += 2
+			if red.team3:
+				rankings[red.team3.number]['CP'] += 2
 			rankings[blue.team1.number]['CP'] += 2
 			rankings[blue.team2.number]['CP'] += 2
-			rankings[blue.team3.number]['CP'] += 2
+			if blue.team3:
+				rankings[blue.team3.number]['CP'] += 2
 
 			rankings[red.team1.number]['QS'] += 2
 			rankings[red.team2.number]['QS'] += 2
-			rankings[red.team3.number]['QS'] += 2
+			if red.team3:
+				rankings[red.team3.number]['QS'] += 2
 			rankings[blue.team1.number]['QS'] += 2
 			rankings[blue.team2.number]['QS'] += 2
-			rankings[blue.team3.number]['QS'] += 2
+			if blue.team3:
+				rankings[blue.team3.number]['QS'] += 2
+
 
 
 	sorted_rankings = rankings.items()
@@ -292,7 +302,9 @@ def calculate_finals(initialize = False, show_next_matches = False):
 				semi_winners[2] = find_winner(2,2, base_match_number)
 
 			# Make the first finals match if necessary
-			if semi_winners[1] and semi_winners[2]:
+			if 1 in semi_winners and semi_winners[1] and 2 in semi_winners and semi_winners[2]:
+				print "I have semi winners", semi_winners
+
 				if 3 not in bracket or 1 not in bracket[3]:
 					match = construct_finals_match(base_match_number, semi_winners[1].number, semi_winners[2].number, 3, 1, 1, True)
 					base_match_number += 1
@@ -366,6 +378,10 @@ def tv_display(request):
 def edit_team(request):
 	pass
 
+def admin(request):
+	# rankings = calculate_rankings()
+	return render_to_response('admin.html')
+
 def edit_match(request, matchid):
 	c = {}
 	c.update(csrf(request))
@@ -382,9 +398,9 @@ def edit_match(request, matchid):
 		else:
 			match.played = False
 
-		match.red_score = match.red.score()
-		match.blue_score = match.blue.score()
-
+		# match.red_score = match.red.score()
+		# match.blue_score = match.blue.score()
+		match.score()
 		
 		match.blue.save()
 		match.red.save()
@@ -496,7 +512,7 @@ def matchlist_generate(request):
 
 		# output = os.system(' '.join((path, '-t', '20' '-r', '6')))
 
-		output = subprocess.check_output([match_maker_path, '-l', team_list_path, '-r', '6', '-s'])
+		output = subprocess.check_output([match_maker_path, '-l', team_list_path, '-r', '6', '-s', '-b'])
 		
 
 		match_list = open(match_list_path, 'w')
@@ -621,6 +637,42 @@ def edit_alliances(request):
 
 
 def homepage(request):
+	steps = dict()
+
+	teams = Team.objects.all()
+	if len(teams) > 0:
+		steps[1] = "complete"
+	else:
+		steps[1] = "current"
+	
+	matches = Match.objects.all().filter(finals_match = False)
+	matches_played = Match.objects.all().filter(finals_match = False).filter(played = True)
+	finals_alliances = Finals_Alliance.objects.all()
+	finals_matches = Match.objects.all().filter(finals_match = True)
+
+	if len(matches) > 0:
+		steps[2] = "complete"
+	elif step[1] == "current":
+		steps[2] = "todo"
+	else:
+		steps[2] = "current"
+
+	
+	if len(matches) == len(matches_played):
+		steps[3] = "complete"
+	elif len(matches) > 0:
+		steps[3] = "current"
+	else:
+		steps[3] = "todo"
+
+	
+
+	if len(finals_alliances) > 0 and len(finals_matches) >= 4:
+		steps[4] = "complete"
+	else:
+		steps[4] = "todo"
+
+
 	# matchlist = Match.objects.all()
-	return render_to_response('home.html', {"matchlist": matchlist})
+	return render_to_response('home.html', {"steps": steps})
 	# return matchlist(request)

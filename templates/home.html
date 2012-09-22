@@ -15,20 +15,46 @@
 		margin-top:20px;
 		border-bottom: 1px solid #ccc;
 	}
+	ul li p{
+		font-size:14px;
+	}
+
+	li.complete{
+		color:green;
+	}
+
+	li.todo{
+		color: #ccc;
+	}
+	li.current{
+		color: black;
+	}
 </style>
 <ul>
-	<li class='step'>Step 1</li>
-	<li>Add Teams</li>
-	<li class='step'>Step 2</li>
-	<li>Generate and Import Match List</li>
-	<li class='step'>Step 3</li>
-	<li>Play all the matches</li>
-	<li class='step'>Step 4</li>
-	<li>Select alliances and enter them in the system, then create the initial 4 finals matches</li>
-	<li class='step'>Step 5</li>
-	<li>Play the finals matches, new matches will auto populate in the match list as needed</li>
-	<li class='step'>Step 6</li>
-	<li>Declare winner</li>
+	
+	<li class='step {{ steps.1 }}'>Step 1
+		<p>Add Teams</p>
+	</li>
+	
+	<li class='step {{ steps.2 }}'>Step 2
+		<p>Generate and Import Match List</p>
+	</li>
+	
+	<li class='step {{ steps.3 }}'>Step 3
+		<p>Play all the matches</p>
+	</li>
+	
+	<li class='step {{ steps.4 }}'>Step 4
+		<p>Select alliances and enter them in the system, then create the initial 4 finals matches</p>
+	</li>
+	
+	<li class='step {{ steps.5 }}'>Step 5
+		<p>Play the finals matches, new matches will auto populate in the match list as needed</p>
+	</li>
+	
+	<li class='step {{ steps.6 }}'>Step 6
+		<p>Declare winner</p>
+	</li>
 </ul>
 
 {% endblock %}
