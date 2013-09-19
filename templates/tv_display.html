@@ -2,7 +2,9 @@
   <head>
     <meta charset="utf-8">
     <title>Battle O' Baltimore Scoring System</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <!-- <meta name="viewport" content="width=1920, user-scalable=no" /> -->
+    <meta name="viewport" content="width=1920; initial-scale=1.0; maximum-scale=1.0;" />
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -13,7 +15,7 @@
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
-    <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet"> -->
     <link href="/assets/css/redmond/jquery-ui-1.8.23.custom.css" rel="stylesheet">
     <script src="/assets/js/jquery.js"></script>
     <script src="/assets/js/bootstrap.js"></script>
@@ -128,13 +130,13 @@ ul li{
   width:250px;
 }
 .ml-num{
-  width:100px;
+  width:86px;
 }
 .ml-time{
   width:132px;
 }
 .ml-score{
-  width:108px;
+  width:122px;
 }
 .ml-team3{
   width:74px;
@@ -145,25 +147,78 @@ ul li{
 #matchlistfloat{
   float:left;
   margin-left:40px;
-  box-shadow:0px 0px 35px black;
+  /*box-shadow:0px 0px 35px black;*/
 }
 #rankingsfloat{
   float:right;
   margin-right:40px;
-  box-shadow:0px 0px 35px black;
+  /*box-shadow:0px 0px 35px black;*/
 }
 #matchlist,
 #rankings{
   top:0;
   -webkit-transition:top .3s ease;
+  -ms-transition:top .3s ease;
+  transition:top .3s ease;
 }
 #matchlistholder,
 #rankingsholder{
-  opacity:.9;
+  /*opacity:.9;*/
+}
+#rankings span{
+  float:none;
+  margin-left: none !important;
+}
+#lastupdated{
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  opacity:.5;
+}
+#bigalert{
+  position: absolute;
+  top:25%;
+  left:50%;
+  margin-left:-700px;
+  width: 1400px;
+  height:600px;
+  background: white;
+  color:black;
+  border-radius:20px;
+  padding: 200px;
+  font-size: 90px;
+  text-align: center;
 }
 </style>
 
   <script type="text/javascript">
+  var lastupdated = 0;
+  var lastupdatedTimerEvent;
+
+  function resetLastUpdated(){
+    lastupdated = 0;
+    clearInterval(lastupdatedTimerEvent);
+    updateLastUpdated();
+    lastupdatedTimerEvent = setInterval(updateLastUpdated, 1000);
+    $("#bigalert").hide();
+  }
+  function updateLastUpdated(){
+    lastupdated ++;
+    if(lastupdated < 5){
+      $("#lastupdated").text("Last updated just now!");
+    }
+    else if(lastupdated < 15){
+      $("#lastupdated").text("Last updated a few seconds ago...");
+    }
+    else if(lastupdated > 15 && lastupdated < 60){
+      $("#lastupdated").text("Last updated " + lastupdated + " second" + (lastupdated > 1 ? "s" : "") + " ago");
+    }
+    else if(lastupdated > 60){
+      $("#bigalert").show().text("Uh oh. Last updated " + lastupdated + " seconds ago, which is longer than it should be. Something is probably wrong. Please ask someone at the scoring table to check the display.");
+    }
+
+  }
+
   $(function(){
     $.getJSON("/json_rankings", function(data){ processRankings(data) });
     setInterval('$.getJSON("/json_rankings", function(data){ processRankings(data) });', 10000);
@@ -180,18 +235,18 @@ ul li{
     $(".rr-rank").width($("#rankingsheader td:eq(0)").width()-1);
     $(".rr-team").width($("#rankingsheader td:eq(1)").width());
     $(".rr-qp").width($("#rankingsheader td:eq(2)").width());
-    $(".rr-hp").width($("#rankingsheader td:eq(3)").width());
-    $(".rr-bp").width($("#rankingsheader td:eq(4)").width());
-    $(".rr-tp").width($("#rankingsheader td:eq(5)").width());
-    $(".rr-cp").width($("#rankingsheader td:eq(6)").width());
-
-    $(".rr-wins").width($("#rankingsheader td:eq(7)").width());
-    $(".rr-played").width($("#rankingsheader td:eq(8)").width());
+    $(".rr-sum_auto_goal").width($("#rankingsheader td:eq(3)").width());
+    $(".rr-sum_climb_points").width($("#rankingsheader td:eq(4)").width());
+    $(".rr-sum_teleop_points").width($("#rankingsheader td:eq(5)").width());
+    $(".rr-wins").width($("#rankingsheader td:eq(6)").width());
+    $(".rr-played").width($("#rankingsheader td:eq(7)").width());
     
   }
   
+
   
   function processMatchlist(data){
+    // lastupdated = 0;
     var i = 1;
     var k = 1;
     //$("#matchlist").html("<tr><td><strong>Match #</strong></td><td><strong>Time</strong></td><td><strong>Score</strong></td><td colspan='3'><strong>Red Alliance</strong></td><td colspan='3'><strong>Blue Alliance</strong></td></tr>");
@@ -259,6 +314,8 @@ ul li{
   }
   
   function processRankings(data){
+    resetLastUpdated();
+
     var i = 1;
     var k = 1;
     $("#rankings").html("");
@@ -270,10 +327,9 @@ ul li{
       str += "<span class='rr-team'>" + data[index][0] + "</span>";
       details = data[index][1];
       str += "<span class='rr-qp'>" + details.QS + "</span>";
-      str += "<span class='rr-hp'>" + details.HP + "</span>";
-      str += "<span class='rr-bp'>" + details.BP + "</span>";
-      str += "<span class='rr-tp'>" + details.TP + "</span>";
-      str += "<span class='rr-cp'>" + details.CP + "</span>";
+      str += "<span class='rr-sum_auto_goal'>" + details.sum_auto_goal + "</span>";
+      str += "<span class='rr-sum_teleop_points'>" + details.sum_teleop_points + "</span>";
+      str += "<span class='rr-sum_climb_points'>" + details.sum_climb_points + "</span>";
 
       str += "<span class='rr-wins'>" + details.Wins + " - " + details.Losses + " - " + details.Ties + "</span>";
       str += "<span class='rr-played'>" + details.Played + "</span>";
@@ -356,11 +412,10 @@ ul li{
     <td><strong onclick="scrollRankings()">Rank</strong></td>
     <td><strong>Team</strong></td>
     <td><strong>QS</strong></td>
-    <td><strong>HP</strong></td>
-    <td><strong>BP</strong></td>
-    <td><strong>TP</strong></td>
-    <td><strong>CP</strong></td>
-    <td><strong>Record (W-L-T)</strong></td>
+    <td><strong>Auto Pts</strong></td>
+    <td><strong>Climb Pts</strong></td>
+    <td><strong>Teleop Pts</strong></td>
+    <td><strong>Record<br>(W-L-T)</strong></td>
     <!-- <td><strong>DQ</strong></td> -->
     <td><strong>Played</strong></td>
 
@@ -372,3 +427,6 @@ ul li{
        </div>
   </div>
   </div>
+
+<span id="lastupdated"></span>
+<div id="bigalert"></div>

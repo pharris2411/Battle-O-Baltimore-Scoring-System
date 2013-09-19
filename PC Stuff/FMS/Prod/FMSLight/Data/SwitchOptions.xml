@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfVideoSwitchInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <VideoSwitchInfo>
+    <SwitchNumber>1</SwitchNumber>
+    <Message />
+    <Name>Video Only</Name>
+  </VideoSwitchInfo>
+  <VideoSwitchInfo>
+    <IsSelected>true</IsSelected>
+    <SwitchNumber>2</SwitchNumber>
+    <Name>Video and Score</Name>
+  </VideoSwitchInfo>
+  <VideoSwitchInfo>
+    <SwitchNumber>5</SwitchNumber>
+    <Message />
+    <Name>Alliance</Name>
+  </VideoSwitchInfo>
+  <VideoSwitchInfo>
+    <SwitchNumber>4</SwitchNumber>
+    <Message />
+    <MessageEnabled>true</MessageEnabled>
+    <Name>Background</Name>
+  </VideoSwitchInfo>
+  <VideoSwitchInfo>
+    <SwitchNumber>6</SwitchNumber>
+    <Message />
+    <Name>Bracket</Name>
+  </VideoSwitchInfo>
+  <!--<VideoSwitchInfo>
+    <SwitchNumber>3</SwitchNumber>
+    <Message />
+    <Name>Match Result</Name>
+  </VideoSwitchInfo>-->
+  <!--<VideoSwitchInfo>
+    <SwitchNumber>10</SwitchNumber>
+    <Message />
+    <Name>Randomizer</Name>
+  </VideoSwitchInfo>-->
+</ArrayOfVideoSwitchInfo>

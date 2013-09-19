@@ -18,7 +18,7 @@ urlpatterns = patterns('',
 
     (r'^admin_controls$', 'scoring.views.admin'),
     (r'^rankings$', 'scoring.views.rankings'),
-    (r'^rankings_print$', 'scoring.views.rankings_print'),
+    # (r'^rankings_print$', 'scoring.views.rankings_print'),
     (r'^matchlist$', 'scoring.views.matchlist'),
     (r'^matchlist_print$', 'scoring.views.matchlist_print'),
     (r'^matchlist_generate$', 'scoring.views.matchlist_generate'),
@@ -31,6 +31,8 @@ urlpatterns = patterns('',
     (r'^edit_match_scoring/(\d+)/(.*)$', 'scoring.views.edit_match_scoring'),
     (r'^view_match_scoring_json/(\d+)/(.*)$', 'scoring.views.view_match_scoring_json'),
     (r'^edit_alliances$', 'scoring.views.edit_alliances'),
+    (r'^first_matchlist$', 'scoring.views.first_matchlist'),
+    (r'^first_rankings$', 'scoring.views.first_rankings'),
     (r'^$', 'scoring.views.homepage'),
    
 )

@@ -60,19 +60,22 @@ class Scoring(models.Model):
 	tele_top = models.IntegerField(default = 0)
 	tele_mid = models.IntegerField(default = 0)
 	tele_low = models.IntegerField(default = 0)
+	tele_pyramid = models.IntegerField(default = 0)
 
-	bridge_options = (
-		(0, "No bots balanced"),
-		(1, "One bot balanced"),
-		(2, "Two bots balanced"),
-		(3, "Three bots balanced")
+	pyramid_options = (
+		(0, "No bots at this level"),
+		(1, "One bot at this level"),
+		(2, "Two bots at this level"),
+		(3, "Three bots at this level")
 	)
 
-	bridge = models.IntegerField(choices=bridge_options, default = 0)
+	pyramid_level1 = models.IntegerField(choices=pyramid_options, default = 0)
+	pyramid_level2 = models.IntegerField(choices=pyramid_options, default = 0)
+	pyramid_level3 = models.IntegerField(choices=pyramid_options, default = 0)
 
-	coop = models.BooleanField(default = False)
+	# coop = models.BooleanField(default = False)
 
-	final_red_ball = models.IntegerField(default = 0)
+	# final_red_ball = models.IntegerField(default = 0)
 
 	team1_disqualified = models.BooleanField(default = False)
 	team2_disqualified = models.BooleanField(default = False)
@@ -85,24 +88,23 @@ class Scoring(models.Model):
 	submitted = models.BooleanField(default = False)
 
 	def score_hybrid(self):
-		return self.hybrid_top*6 + self.hybrid_mid*5 + self.hybrid_low*4
+		return self.hybrid_top*6 + self.hybrid_mid*4 + self.hybrid_low*2
 
 	def score_tele(self):
-		return self.tele_top*3 + self.tele_mid*2 + self.tele_low + self.final_red_ball * 20
+		return self.tele_top*3 + self.tele_mid*2 + self.tele_low + self.tele_pyramid*5
 
-	def score_bridge(self):
-		# max of 20 points 
-		bridge_points = self.bridge * 10
-		if(bridge_points > 20):
-			bridge_points = 20
-		return bridge_points
+	def score_climb(self):
+		
+		climb_points = self.pyramid_level1 * 10 + self.pyramid_level2 * 20 + self.pyramid_level3 * 30
+
+		return climb_points
 
 	def score(self):
 		score = 0
 
 		score += self.score_hybrid()
 		score += self.score_tele()
-		score += self.score_bridge()
+		score += self.score_climb()
 
 		# score -= self.penalties
 

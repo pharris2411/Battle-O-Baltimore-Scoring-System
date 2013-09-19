@@ -1,54 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Battle O' Baltimore Scoring System</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<head>
+	<meta charset="utf-8">
+	<title>Battle O' Baltimore Scoring System</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-    <!-- Le styles -->
-    <link href="/assets/css/bootstrap.css" rel="stylesheet">
-    <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
-    <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="/assets/css/redmond/jquery-ui-1.8.23.custom.css" rel="stylesheet">
-    <script src="/assets/js/jquery.js"></script>
-    <script src="/assets/js/bootstrap.js"></script>
-    <script src="/assets/js/jquery-ui-1.8.23.custom.min.js"></script>
-    <script src="/assets/js/jquery.hotkeys.js"></script>
-  </head>
+	<!-- Le styles -->
+	<link href="/assets/bs3/css/bootstrap.css" rel="stylesheet">
+	<style>
+	body {
+		background-color: #888;
+	}
+	</style>
+	<!-- <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet"> -->
+	<link href="/assets/css/redmond/jquery-ui-1.8.23.custom.css" rel="stylesheet">
+	<link href="/assets/css/component.css" rel="stylesheet">
+	<!-- <link href="/assets/css/bootstrap.css" rel="stylesheet"> -->
+	<script src="/assets/js/jquery.js"></script>
+	<script src="/assets/bs3/js/bootstrap.js"></script>
+	<script src="/assets/js/jquery-ui-1.8.23.custom.min.js"></script>
+	<script src="/assets/js/jquery.hotkeys.js"></script>
+	<!--<script type='application/javascript' src='/assets/js/fastclick-master/lib/fastclick.js'></script>-->
+	<script src="/assets/js/jquery.hammer.js"></script>
 
-  <body>
+</head>
 
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="/">Battle O' Baltimore Scoring System</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><a href="/">Home</a></li>
-              <li><a href="/rankings">Rankings</a></li>
-              <li><a href="/matchlist">Match List</a></li>
-              
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
+<body>
+<!-- 
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="/">Battle O' Baltimore Scoring System</a>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li><a href="/">Home</a></li>
+							<li><a href="/rankings">Rankings</a></li>
+							<li><a href="/matchlist">Match List</a></li>
+							<li><a href="/tv_display">TV Display</a></li>
+							<li><a href="/finals_bracket">Finals Bracket</a></li> -->
+							<!-- <li><a href="/admin_controls">Admin Controls</a></li> -->
+<!--             </div>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div> -->
+		
+		<div id="st-container" class="st-container">
+			<nav class="st-menu st-effect-11" id="menu-11">
+				<h2>Battle O' Baltimore Scoring System</h2>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="/rankings">Rankings</a></li>
+					<li><a href="/matchlist">Match List</a></li>
+					<li><a href="/tv_display">TV Display</a></li>
+					<li><a href="/finals_bracket">Finals Bracket</a></li>
+				</ul>
+			</nav>
+			<div class="st-pusher">
 
-    <div class="container">
+				<div class="st-content">
+					<div id="st-trigger-effects" class="column">
+						<button data-effect="st-effect-11" class='btn btn-success btn-lg' style='margin-bottom:10px;'>
+							<span class='glyphicon glyphicon-align-justify'></span>
+							Menu
+						</button>
+					</div>
+		<!-- this is the wrapper for the content -->
+					<div class="st-content-inner">
 
-     {% block content %}{% endblock %}
 
-    </div> <!-- /container -->
-  </body>
-</html>
+						{% block content %}{% endblock %}
+					</div><!-- /st-content-inner -->
+				</div><!-- /st-content -->
+			</div><!-- /st-pusher -->
+		</div><!-- /st-container -->
+	<script src="/assets/js/classie.js"></script>
+	<script src="/assets/js/sidebarEffects.js"></script>
+	</body>
+	</html>
+
+

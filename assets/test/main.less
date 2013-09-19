@@ -1,0 +1,149 @@
+
+li.popout1{
+	-webkit-animation: movepos 2s ease-in;
+	
+}
+li.popout2{
+	-webkit-animation: movepos 2s ease-in;
+	/*-webkit-animation-delay: .5s;*/
+	/*-webkit-transition: top 2s cubic-bezier(.7,0,.3,1);*/
+	
+}
+li.popout3{
+	-webkit-animation: movepos 2s ease-in;
+	/*-webkit-animation-delay: 1s;*/
+	/*-webkit-transition: top 2.5s cubic-bezier(.7,0,.3,1);*/
+
+}
+@-webkit-keyframes movepos{
+	0% { 
+		-webkit-transform: scale(1);
+		/*box-shadow:0 0 0px rgba(0,0,0,.8);*/
+	}
+	20% {
+		-webkit-transform: scale(1.1);
+		/*box-shadow:0 10px 20px rgba(0,0,0,.8);*/
+	}
+	80%{
+		-webkit-transform: scale(1.1);
+		/*box-shadow:0 10px 20px rgba(0,0,0,.8);*/
+	}
+	100%{
+		-webkit-transform: scale(1);
+		/*box-shadow:0 0 0px rgba(0,0,0,.8);*/
+	}
+}
+@-webkit-keyframes blurrynum{
+	0% { 
+		webkit-filter: blur(0px);
+	}
+	20% {
+		webkit-filter: blur(2px);
+	}
+	80%{
+		webkit-filter: blur(2px);
+	}
+	100%{
+		webkit-filter: blur(0px);
+	}
+}
+ul{
+	margin:0;
+	padding:0;
+	position: relative;
+}
+body{
+	background-color: #333;
+	margin:0;
+	padding:0;
+}
+
+@row-height:18px;
+@row-padding: 10px;
+@row-margin: 10px;
+@rankcol-width: 50px;
+.relement (@offset: 0) {
+	top: (@offset * (@row-height+@row-padding+@row-margin));
+
+	ul.rankcol li{
+		top: -((@offset+-1) * (@row-height));
+	}
+}
+.r0{.relement(0)}
+.r1{.relement(1)}
+.r2{.relement(2)}
+.r3{.relement(3)}
+.r4{.relement(4)}
+.r5{.relement(5)}
+.r6{.relement(6)}
+.r7{.relement(7)}
+.r8{.relement(8)}
+.r9{.relement(9)}
+.r10{.relement(10)}
+.r11{.relement(11)}
+.r12{.relement(12)}
+.r13{.relement(13)}
+.r14{.relement(14)}
+.r15{.relement(15)}
+.r16{.relement(16)}
+.r17{.relement(17)}
+.r18{.relement(18)}
+.r19{.relement(19)}
+.r20{.relement(20)}
+.r21{.relement(21)}
+.r22{.relement(22)}
+.r23{.relement(23)}
+.r24{.relement(24)}
+.r25{.relement(25)}
+.r26{.relement(26)}
+.r27{.relement(27)}
+.r28{.relement(28)}
+.r29{.relement(29)}
+.r30{.relement(30)}
+.r31{.relement(31)}
+.r32{.relement(32)}
+.r33{.relement(33)}
+.r34{.relement(34)}
+.r35{.relement(35)}
+.r36{.relement(36)}
+.r37{.relement(37)}
+.r38{.relement(38)}
+.r39{.relement(39)}
+
+
+ul{
+	margin:0 auto;
+	width:400px;
+}
+ul li{
+	display:block;
+	width:100%;
+	height:@row-height;
+	background-color: #000;
+	color: white;
+	border: 1px solid white;
+	padding: @row-padding;
+	margin:@row-margin;
+	position: absolute;
+	-webkit-transition: top 1.5s cubic-bezier(.7,0,.3,1);
+
+	overflow: hidden;
+}
+li span.rankcol{
+	display:inline-block;
+	width:@rankcol-width;
+}
+li ul.rankcol{
+	float:left;
+	width:@rankcol-width;
+	height: @row-height;
+	overflow: hidden;
+}
+li ul.rankcol li{
+	margin: 0;
+	padding: 0;
+	border: none;
+	position: relative;
+	width:100%;
+	height: @row-height;
+}

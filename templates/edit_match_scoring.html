@@ -3,6 +3,8 @@
 
 
 {% block content %}
+<meta name="viewport" content="width=1024, user-scalable=no" />
+
 
 <form method="post" url="/edit_match_scoring/{{match.number}}" class='{{side}}'>
 
@@ -10,9 +12,12 @@
 {% csrf_token %}
 
 <style>
+#myTab li a{
+	font-size:24px;
+}
 .field{
 	height:508px;
-	width:535px;
+	/*width:535px;*/
 	position:relative;
 }
 .red .field{
@@ -22,12 +27,12 @@
 	/*background-image: url("/assets/img/field-blue.png");*/
 }
 .red .field input{
-	box-shadow: 0 0 0 10px black, 0 0 0 20px gray, 0 0 0 30px black, 0 0 0 45px #eee, 0 0 0 55px red, 0 0 5px 55px #333;
+	/*box-shadow: 0 0 0 10px black, 0 0 0 20px gray, 0 0 0 30px black, 0 0 0 45px #eee, 0 0 0 55px red, 0 0 5px 55px #333;*/
 	border-radius:0;
 	padding:0 20px;
 }
 .blue .field input{
-	box-shadow: 0 0 0 10px black, 0 0 0 20px gray, 0 0 0 30px black, 0 0 0 45px #eee, 0 0 0 55px blue, 0 0 5px 55px #333;
+	/*box-shadow: 0 0 0 10px black, 0 0 0 20px gray, 0 0 0 30px black, 0 0 0 45px #eee, 0 0 0 55px blue, 0 0 5px 55px #333;*/
 	border-radius:0;
 	padding:0 20px;
 }
@@ -49,14 +54,50 @@
 .match_info{
 	margin:10px;
 }
-.field input{
+.field div{
 	position:absolute;
+	/*width:58px;*/
+	/*height:40px;*/
+	font-size:32px;
+	text-align:center;
+	z-index: 1000;
+
+}
+.field div input{
+	width:58px;
+	font-size: 32px;
+	height:40px;
+}
+.field div span{
+	display:inline-block;
+	border:1px solid gray;
+	padding:20px;
+	-webkit-transition:all .3s ease;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+}
+.field div span.button{
+	cursor: pointer;
+}
+.field div span.button:active{
+	background-color:green;
+	-webkit-transition:all 0s ease;
+}
+.field div span.button.decrement:active{
+	background-color:red;
+	-webkit-transition:all 0s ease;
+}
+.field_pyramid input{
 	width:58px;
 	height:40px;
 	font-size:32px;
 	text-align:center;
 	z-index: 1000;
-
 }
 
 .field .field-top{
@@ -75,13 +116,69 @@
 	top:405px;
 	left:230px;
 }
+.field .field-pyramid{
+	top:70px;
+	left:600px;
+}
 
+.field .field-top:before{
+	content:"Top";
+	position: absolute;
+	display: block;
+	top:-40px;
+	text-align: center;
+	width:180px;
+}
+.field .field-midl:before{
+	content:"Mid Left";
+	position: absolute;
+	display: block;
+	top:-40px;
+	text-align: center;
+	width:180px;
+}
+.field .field-midr:before{
+	content:"Mid Right";
+	position: absolute;
+	display: block;
+	top:-40px;
+	text-align: center;
+	width:180px;
+}
+.field .field-low:before{
+	content:"Low";
+	position: absolute;
+	display: block;
+	top:-40px;
+	text-align: center;
+	width:180px;
+}
+.field .field-pyramid:before{
+	content:"Pyramid";
+	position: absolute;
+	display: block;
+	top:-40px;
+	text-align: center;
+	width:180px;
+}
+div.field-pyramid_level1:after,
+div.field-pyramid_level2:after,
+div.field-pyramid_level3:after{
+	content:"bots at this level";
+	position: absolute;
+	display: block;
+	left:180px;
+	top:20px;
+	text-align: center;
+	width:200px;
+	font-size: 24px;
+}
 #hybrid::after,
 #tele::after{
-	content:"hybrid";
+	content:"Autonomous";
 	position: absolute;
-	font-size:192px;
-	top:220px;
+	font-size:80px;
+	top:20px;
 	left:0;
 	color:#000;
 	z-index:1;
@@ -110,6 +207,25 @@
 	padding-left:20px;
 	color: #ccc;
 }
+
+.field-pyramid_level1{
+	position:absolute;
+	top:365px;
+	left:470px;
+}
+.field-pyramid_level2{
+	position:absolute;
+	top:250px;
+	left:470px;
+}
+.field-pyramid_level3{
+	position:absolute;
+	top:130px;
+	left:470px;
+}
+#endgame{
+	position: relative;
+}
 </style>
 
 
@@ -127,21 +243,20 @@
 	<span class='team_number'>{{scores.team2.number}}</span>
 	<span class='team_number'>{{scores.team3.number}}</span>
 
-	<div>
-		{% if prevmatch %}
+	
+	{% if saved %}
+		<div>
+			{% if prevmatch %}
 			<a href="/edit_match_scoring/{{ prevmatch }}/{{side}}" class='btn' id='prevmatch'>Previous Match</a>
-		{% endif %}
+			{% endif %}
 
-		{% if nextmatch %}
-			<a href="/edit_match_scoring/{{ nextmatch }}/{{side}}" class='btn' id="nextmatch">Next Match</a>
-		{% endif %}
-
-		<!-- <a href="/edit_match_scoring/{{ currentmatch.number }}/{{otherside}}" class='btn btn-warning'>Switch Sides</a> -->
-
-		{% if saved %}
+			{% if nextmatch %}
+				<a href="/edit_match_scoring/{{ nextmatch }}/{{side}}" class='btn' id="nextmatch">Next Match</a>
+			{% endif %}
 			<div class='btn btn-danger' onclick="$('.scoring').show();$(this).hide(); $('.keybindings .game').show(); $('.keybindings .non-game').hide(); $('.keybindings .endgame').hide(); ">Edit Scores</div>
-		{% endif %}
-	</div>
+		</div>
+	{% endif %}
+
 
 </div>
 
@@ -172,45 +287,38 @@
 <div class='scoring'>
 	{% if not played %}
 		<ul class="nav nav-tabs" id="myTab">
-		  <li class="active"><a href="#hybrid">Hybrid</a></li>
+		  <li class="active"><a href="#hybrid">Autonomous</a></li>
 		  <li><a href="#tele">Tele</a></li>
 		  <li><a href="#endgame">End Game</a></li>
 		</ul>
 		 
 		<div class="tab-content">
 		  <div class="tab-pane active field" id="hybrid">
-		  		<input type='number' min='0' max='99' class="field-top"  value="{{scores.hybrid_top}}" name="hybrid_top"  id="hybrid_top">
-				<input type='number' min='0' max='99' class="field-midl" value="{{scores.hybrid_mid}}" name="hybrid_midl" id="hybrid_midl">
-				<input type='number' min='0' max='99' class="field-midr" value="0"                     name="hybrid_midr" id="hybrid_midr">
-				<input type='number' min='0' max='99' class="field-low"  value="{{scores.hybrid_low}}" name="hybrid_low"  id="hybrid_low">
+		  		<input type='hidden' min='0' max='99' class="field-top"  value="{{scores.hybrid_top}}" name="hybrid_top"  id="hybrid_top">
+				<input type='hidden' min='0' max='99' class="field-midl" value="{{scores.hybrid_mid}}" name="hybrid_midl" id="hybrid_midl">
+				<input type='hidden' min='0' max='99' class="field-midr" value="0"                     name="hybrid_midr" id="hybrid_midr">
+				<input type='hidden' min='0' max='99' class="field-low"  value="{{scores.hybrid_low}}" name="hybrid_low"  id="hybrid_low">
 		  </div>
 		  <div class="tab-pane field" id="tele">
-		  		<input type='number' min='0' max='99' class="field-top"  value="{{scores.tele_top}}" name="tele_top"  id="tele_top">
-				<input type='number' min='0' max='99' class="field-midl" value="{{scores.tele_mid}}" name="tele_midl" id="tele_midl">
-				<input type='number' min='0' max='99' class="field-midr" value="0"                   name="tele_midr" id="tele_midr">
-				<input type='number' min='0' max='99' class="field-low"  value="{{scores.tele_low}}" name="tele_low"  id="tele_low">
+		  		<input type='hidden' min='0' max='99' class="field-top"  value="{{scores.tele_top}}" name="tele_top"  id="tele_top">
+				<input type='hidden' min='0' max='99' class="field-midl" value="{{scores.tele_mid}}" name="tele_midl" id="tele_midl">
+				<input type='hidden' min='0' max='99' class="field-midr" value="0"                   name="tele_midr" id="tele_midr">
+				<input type='hidden' min='0' max='99' class="field-low"  value="{{scores.tele_low}}" name="tele_low"  id="tele_low">
+				<input type='hidden' min='0' max='99' class="field-pyramid"  value="{{scores.tele_pyramid}}" name="tele_pyramid"  id="tele_pyramid">
 		  </div>
-		  <div class="tab-pane" id="endgame">
+		  <div class="tab-pane field field_pyramid" id="endgame">
+				<img src="/assets/img/pyramid.jpg" style='width:450px'/>
 				
-				<label for='bridge'>Bridge Bots</label>
-				
-				<input type='number' name="bridge" min='0' max='3' value="{{scores.bridge}}" id='bridge'>
-				
-
-				
-
-
-				<label for='final_red_ball'>Final Red Ball(s)</label>
-				<input type='number' name="final_red_ball" id="final_red_ball" min='0' max='99' value='{{scores.final_red_ball}}'>
-
-				<label>
-					<input type="checkbox" name="coop" {% if scores.coop %} checked {% endif %} id="coop"> Co-opertion Bridge
-				</label>
-				
+				<input type='hidden' min='0' max='3' class="field-pyramid_level1" value="{{scores.pyramid_level1}}" name="pyramid_level1" id="pyramid_level1">
+				<input type='hidden' min='0' max='3' class="field-pyramid_level2" value="{{scores.pyramid_level2}}" name="pyramid_level2" id="pyramid_level2">
+				<input type='hidden' min='0' max='3' class="field-pyramid_level3" value="{{scores.pyramid_level3}}" name="pyramid_level3" id="pyramid_level3">
 		  </div>
 		</div>
 		 
 		<script>
+
+		var isiPad = navigator.userAgent.match(/iPad/i) != null;
+
 		  $(function () {
 		    // $('#myTab a:last').tab('show');
 		    $('#myTab a').click(function (e) {
@@ -228,87 +336,96 @@
 			$(document).bind('keypress', 'shift+a', function (evt){ decrement('.active .field-midl')  });
 			$(document).bind('keypress', 'shift+s', function (evt){ decrement('.active .field-low') });
 
-			$(document).bind('keypress', 'q', function (evt){ $('#myTab li:eq(0) a').tab('show'); $('.keybindings .hoops').show(); $('.keybindings .endgame').hide(); });
-			$(document).bind('keypress', 'e', function (evt){ $('#myTab li:eq(1) a').tab('show'); $('.keybindings .hoops').show(); $('.keybindings .endgame').hide(); });
-			$(document).bind('keypress', 'r', function (evt){ $('#myTab li:eq(2) a').tab('show'); $('.keybindings .hoops').hide(); $('.keybindings .endgame').show(); });
+			$(document).bind('keypress', '1', function (evt){ $('#myTab li:eq(0) a').tab('show'); $('.keybindings .hoops').show(); $('.keybindings .endgame').hide(); });
+			$(document).bind('keypress', '2', function (evt){ $('#myTab li:eq(1) a').tab('show'); $('.keybindings .hoops').show(); $('.keybindings .endgame').hide(); });
+			$(document).bind('keypress', '3', function (evt){ $('#myTab li:eq(2) a').tab('show'); $('.keybindings .hoops').hide(); $('.keybindings .endgame').show(); });
 
-			$(document).bind('keypress', 'b', function (evt){ cycleBridge() });
-			$(document).bind('keypress', 'c', function (evt){ toggleCoop() });
+			// $(document).bind('keypress', 'b', function (evt){ cycleBridge() });
+			// $(document).bind('keypress', 'c', function (evt){ toggleCoop() });
 
-			$(document).bind('keypress', 'f', function (evt){ increment('.active #final_red_ball') });
-			$(document).bind('keypress', 'shift+f', function (evt){ decrement('.active #final_red_ball') });
+			// $(document).bind('keypress', 'f', function (evt){ increment('.active #final_red_ball') });
+			// $(document).bind('keypress', 'shift+f', function (evt){ decrement('.active #final_red_ball') });
 			$('input').attr('autocomplete','off');
+
+			$(".tab-pane input").each(function(){ 
+				var theClass = $(this).attr('class');
+				$(this).wrap("<div class='" + theClass + "'></div>");
+				if(isiPad){
+					$(this).before("<span class='button increment_button' data-target='" + theClass + "'>+</span><span class='num'>" + $(this).val() + "</span>");
+					$(this).after("<span class='button decrement_button decrement' data-target='" + theClass + "'>-</span>");
+				}
+				else {
+					$(this).before("<span class='button increment_button' onclick='increment(\".active ." + theClass + "\")'>+</span><span class='num'>" + $(this).val() + "</span>");
+					$(this).after("<span class='button decrement_button decrement' onclick='decrement(\".active ." + theClass + "\")'>-</span>");
+				}
+			});
+			
+			if(isiPad){
+				$(".keybindings").hide();
+
+				// http://eightmedia.github.io/hammer.js/examples/jquery.html
+				// Hammer JS allows very quick touch events on iOS
+				var hammertime = $(".tab-content").hammer();
+
+				$(".increment_button").on("touch", function(ev) {
+					increment(".active ." + $(ev.currentTarget).attr('data-target') );
+					// console.log(ev);
+					// alert("Here I am!");
+					ev.gesture.preventDefault();
+					ev.stopPropagation();
+				});
+
+				$(".decrement_button").on("touch", function(ev) {
+					decrement(".active ." + $(ev.currentTarget).attr('data-target') );
+					ev.gesture.preventDefault();
+					ev.stopPropagation();
+				});
+			}
+
+			
+
 		  });
 
 		function increment(target){
-			$(target).val(parseInt($(target).val()) + 1);
+			var newval = parseInt($(target).find('input').val()) + 1;
+			$(target).find('input').val(newval);
+			$(target).find('.num').text(newval);
 			calculateScore();
 			return false;
 		}
 
 		function decrement(target){
-			var value = parseInt($(target).val()) - 1;
-			if(value < 0)
-				value = 0;
-			$(target).val(value);
+			var newval = parseInt($(target).find('input').val()) - 1;
+			if(newval < 0)
+				newval = 0;
+
+			$(target).find('input').val(newval);
+			$(target).find('.num').text(newval);
+			// $(target).val(value);
 			calculateScore();
 			return false;
 		}
 
-		function cycleBridge(){
-			target = ".active #bridge";
-			var value = parseInt($(target).val()) + 1;
-			if(value > 3)
-				value = 0;
-			$(target).val(value);
-			calculateScore();
-		}
-
-		function toggleCoop(){
-			$(".active #coop").prop('checked', ! $(".active #coop").prop("checked"));
-		}
+	
 
 		function calculateScore(){
-			// def score_hybrid(self):
-			// 	return self.hybrid_top*6 + self.hybrid_mid*5 + self.hybrid_low*4
-
-			// def score_tele(self):
-			// 	return self.tele_top*3 + self.tele_mid*2 + self.tele_low + self.final_red_ball * 20
-
-			// def score_bridge(self):
-			// 	# max of 20 points 
-			// 	bridge_points = self.bridge * 10
-			// 	if(bridge_points > 20):
-			// 		bridge_points = 20
-			// 	return bridge_points
-
-			// def score(self):
-			// 	score = 0
-
-			// 	score += self.score_hybrid()
-			// 	score += self.score_tele()
-			// 	score += self.score_bridge()
-
-			// 	score -= self.penalties
-
-			// 	return score
+			
 			var score = 0;
 			score += parseInt($("#hybrid_top").val()) * 6;
-			score += parseInt($("#hybrid_midr").val()) * 5;
-			score += parseInt($("#hybrid_midl").val()) * 5;
-			score += parseInt($("#hybrid_low").val()) * 4;
+			score += parseInt($("#hybrid_midr").val()) * 4;
+			score += parseInt($("#hybrid_midl").val()) * 4;
+			score += parseInt($("#hybrid_low").val()) * 2;
 
 			score += parseInt($("#tele_top").val()) * 3;
 			score += parseInt($("#tele_midr").val()) * 2;
 			score += parseInt($("#tele_midl").val()) * 2;
 			score += parseInt($("#tele_low").val()) * 1;
 
-			var bridge_points = 0;
-			bridge_points = parseInt($("#bridge").val()) * 10;
-			if(bridge_points > 20)
-				bridge_points = 20;
-			score += bridge_points;
-			score += parseInt($("#final_red_ball").val()) * 20;
+			score += parseInt($("#tele_pyramid").val()) * 5;
+
+			score += parseInt($("#pyramid_level1").val()) * 10;
+			score += parseInt($("#pyramid_level2").val()) * 20;
+			score += parseInt($("#pyramid_level3").val()) * 30;
 
 			$("#score").html("Score: " + score + "<span>(calculated, does not include penalties)</span>");
 
@@ -342,9 +459,9 @@
 		</tr>
 		<tr class='non-game'><td>.</td><td>Next Match</td></tr>
 		<tr class='non-game'><td>,</td><td>Previous Match</td></tr>
-		<tr class='game '><td>Q</td><td>Hybrid Tab</td></tr>
-		<tr class='game '><td>E</td><td>Tele Tab</td></tr>
-		<tr class='game '><td>R</td><td>End Game Tab</td></tr>
+		<tr class='game '><td>1</td><td>Autonomous Tab</td></tr>
+		<tr class='game '><td>2</td><td>Tele Tab</td></tr>
+		<tr class='game '><td>3</td><td>End Game Tab</td></tr>
 		<tr class='game hoops'><td>W</td><td>Increment Top</td></tr>
 		<tr class='game hoops'><td>A</td><td>Increment Mid Left</td></tr>
 		<tr class='game hoops'><td>S</td><td>Increment Bottom</td></tr>
@@ -353,10 +470,10 @@
 		<tr class='game hoops'><td>Shift + A</td><td>Decrement Mid Left</td></tr>
 		<tr class='game hoops'><td>Shift + S</td><td>Decrement Bottom</td></tr>
 		<tr class='game hoops'><td>Shift + D</td><td>Decrement Mid Right</td></tr>
-		<tr class='game endgame'><td>B</td><td>Cycle Bridge Bots (0-3)</td></tr>
-		<tr class='game endgame'><td>F</td><td>Increment Final Red Ball</td></tr>
-		<tr class='game endgame'><td>Shift+F</td><td>Decrement Final Red Ball</td></tr>
-		<tr class='game endgame'><td>C</td><td>Toggle Co-opertition</td></tr>
+		<!-- <tr class='game endgame'><td>B</td><td>Cycle Bridge Bots (0-3)</td></tr> -->
+		<!-- <tr class='game endgame'><td>F</td><td>Increment Final Red Ball</td></tr> -->
+		<!-- <tr class='game endgame'><td>Shift+F</td><td>Decrement Final Red Ball</td></tr> -->
+		<!-- <tr class='game endgame'><td>C</td><td>Toggle Co-opertition</td></tr> -->
 	</table>
 </div>
 </form>

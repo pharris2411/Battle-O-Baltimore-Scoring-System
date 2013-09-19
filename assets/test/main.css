@@ -1,0 +1,338 @@
+li.popout1 {
+  -webkit-animation: movepos 2s ease-in;
+}
+li.popout2 {
+  -webkit-animation: movepos 2s ease-in;
+  /*-webkit-animation-delay: .5s;*/
+
+  /*-webkit-transition: top 2s cubic-bezier(.7,0,.3,1);*/
+
+}
+li.popout3 {
+  -webkit-animation: movepos 2s ease-in;
+  /*-webkit-animation-delay: 1s;*/
+
+  /*-webkit-transition: top 2.5s cubic-bezier(.7,0,.3,1);*/
+
+}
+@-webkit-keyframes movepos {
+  0% {
+    -webkit-transform: scale(1);
+    /*box-shadow:0 0 0px rgba(0,0,0,.8);*/
+  
+  }
+  20% {
+    -webkit-transform: scale(1.1);
+    /*box-shadow:0 10px 20px rgba(0,0,0,.8);*/
+  
+  }
+  80% {
+    -webkit-transform: scale(1.1);
+    /*box-shadow:0 10px 20px rgba(0,0,0,.8);*/
+  
+  }
+  100% {
+    -webkit-transform: scale(1);
+    /*box-shadow:0 0 0px rgba(0,0,0,.8);*/
+  
+  }
+}
+@-webkit-keyframes blurrynum {
+  0% {
+    webkit-filter: blur(0px);
+  }
+  20% {
+    webkit-filter: blur(2px);
+  }
+  80% {
+    webkit-filter: blur(2px);
+  }
+  100% {
+    webkit-filter: blur(0px);
+  }
+}
+ul {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+body {
+  background-color: #333;
+  margin: 0;
+  padding: 0;
+}
+.r0 {
+  top: 0px;
+}
+.r0 ul.rankcol li {
+  top: 18px;
+}
+.r1 {
+  top: 38px;
+}
+.r1 ul.rankcol li {
+  top: 0px;
+}
+.r2 {
+  top: 76px;
+}
+.r2 ul.rankcol li {
+  top: -18px;
+}
+.r3 {
+  top: 114px;
+}
+.r3 ul.rankcol li {
+  top: -36px;
+}
+.r4 {
+  top: 152px;
+}
+.r4 ul.rankcol li {
+  top: -54px;
+}
+.r5 {
+  top: 190px;
+}
+.r5 ul.rankcol li {
+  top: -72px;
+}
+.r6 {
+  top: 228px;
+}
+.r6 ul.rankcol li {
+  top: -90px;
+}
+.r7 {
+  top: 266px;
+}
+.r7 ul.rankcol li {
+  top: -108px;
+}
+.r8 {
+  top: 304px;
+}
+.r8 ul.rankcol li {
+  top: -126px;
+}
+.r9 {
+  top: 342px;
+}
+.r9 ul.rankcol li {
+  top: -144px;
+}
+.r10 {
+  top: 380px;
+}
+.r10 ul.rankcol li {
+  top: -162px;
+}
+.r11 {
+  top: 418px;
+}
+.r11 ul.rankcol li {
+  top: -180px;
+}
+.r12 {
+  top: 456px;
+}
+.r12 ul.rankcol li {
+  top: -198px;
+}
+.r13 {
+  top: 494px;
+}
+.r13 ul.rankcol li {
+  top: -216px;
+}
+.r14 {
+  top: 532px;
+}
+.r14 ul.rankcol li {
+  top: -234px;
+}
+.r15 {
+  top: 570px;
+}
+.r15 ul.rankcol li {
+  top: -252px;
+}
+.r16 {
+  top: 608px;
+}
+.r16 ul.rankcol li {
+  top: -270px;
+}
+.r17 {
+  top: 646px;
+}
+.r17 ul.rankcol li {
+  top: -288px;
+}
+.r18 {
+  top: 684px;
+}
+.r18 ul.rankcol li {
+  top: -306px;
+}
+.r19 {
+  top: 722px;
+}
+.r19 ul.rankcol li {
+  top: -324px;
+}
+.r20 {
+  top: 760px;
+}
+.r20 ul.rankcol li {
+  top: -342px;
+}
+.r21 {
+  top: 798px;
+}
+.r21 ul.rankcol li {
+  top: -360px;
+}
+.r22 {
+  top: 836px;
+}
+.r22 ul.rankcol li {
+  top: -378px;
+}
+.r23 {
+  top: 874px;
+}
+.r23 ul.rankcol li {
+  top: -396px;
+}
+.r24 {
+  top: 912px;
+}
+.r24 ul.rankcol li {
+  top: -414px;
+}
+.r25 {
+  top: 950px;
+}
+.r25 ul.rankcol li {
+  top: -432px;
+}
+.r26 {
+  top: 988px;
+}
+.r26 ul.rankcol li {
+  top: -450px;
+}
+.r27 {
+  top: 1026px;
+}
+.r27 ul.rankcol li {
+  top: -468px;
+}
+.r28 {
+  top: 1064px;
+}
+.r28 ul.rankcol li {
+  top: -486px;
+}
+.r29 {
+  top: 1102px;
+}
+.r29 ul.rankcol li {
+  top: -504px;
+}
+.r30 {
+  top: 1140px;
+}
+.r30 ul.rankcol li {
+  top: -522px;
+}
+.r31 {
+  top: 1178px;
+}
+.r31 ul.rankcol li {
+  top: -540px;
+}
+.r32 {
+  top: 1216px;
+}
+.r32 ul.rankcol li {
+  top: -558px;
+}
+.r33 {
+  top: 1254px;
+}
+.r33 ul.rankcol li {
+  top: -576px;
+}
+.r34 {
+  top: 1292px;
+}
+.r34 ul.rankcol li {
+  top: -594px;
+}
+.r35 {
+  top: 1330px;
+}
+.r35 ul.rankcol li {
+  top: -612px;
+}
+.r36 {
+  top: 1368px;
+}
+.r36 ul.rankcol li {
+  top: -630px;
+}
+.r37 {
+  top: 1406px;
+}
+.r37 ul.rankcol li {
+  top: -648px;
+}
+.r38 {
+  top: 1444px;
+}
+.r38 ul.rankcol li {
+  top: -666px;
+}
+.r39 {
+  top: 1482px;
+}
+.r39 ul.rankcol li {
+  top: -684px;
+}
+ul {
+  margin: 0 auto;
+  width: 400px;
+}
+ul li {
+  display: block;
+  width: 100%;
+  height: 18px;
+  background-color: #000;
+  color: white;
+  border: 1px solid white;
+  padding: 10px;
+  margin: 10px;
+  position: absolute;
+  -webkit-transition: top 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+  overflow: hidden;
+}
+li span.rankcol {
+  display: inline-block;
+  width: 50px;
+}
+li ul.rankcol {
+  float: left;
+  width: 50px;
+  height: 18px;
+  overflow: hidden;
+}
+li ul.rankcol li {
+  margin: 0;
+  padding: 0;
+  border: none;
+  position: relative;
+  width: 100%;
+  height: 18px;
+}

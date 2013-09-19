@@ -48,10 +48,10 @@ Examples:
 """
 
 CPSERVER_OPTIONS = {
-'host': '192.168.1.133',
-'port': 8088,
+'host': '192.168.1.190',
+'port': 8022,
 'server_name': 'localhost',
-'threads': 10, 
+'threads': 20, 
 'daemonize': False,
 'workdir': None,
 'pidfile': None,

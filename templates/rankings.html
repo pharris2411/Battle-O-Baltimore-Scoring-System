@@ -4,54 +4,33 @@
 
 {% block content %}
 
-<style>
-	ul.rankings{
-		list-style: none;
-	}
-	ul.rankings li{
-		display:block;
-		font-size:20px;
-		padding:10px 0px;
-		-webkit-transition:.5s ease all;
-		position:relative;
-	}
-	ul.rankings li:nth-child(even){
-		background-color:rgba(0,0,0,.1);
-	}
-	ul.rankings li span{
-		display:inline-block;
-		width:90px;
-	}
-</style>
 
-<ul class='rankings'>
-	<li class='fixed'>
-		<span>Rank</span>
-		<span>Team</span>
-		<span>QS</span>
-		<span>HP</span>
-		<span>BP</span>
-		<span>TP</span>
-		<span>CP</span>
-		<span>Record (W-L-T)</span>
-		<span>DQ</span>
-		<span>Played</span>
-	</li>
+<table class='table table-bordered table-striped table-condensed table-responsive'>
+	<tr class='fixed'>
+		<td>Rank</td>
+		<td>Team</td>
+		<td>QS</td>
+		<td>Auto Pts</td>
+		<td>Climb Pts</td>
+		<td>Teleop Pts</td>
+		<td>Record<br />(W-L-T)</td>
+		<td>DQ</td>
+		<td>Played</td>
+	</tr>
 {% for team, scores in rankings %}
-	<li id="team{{team}}">
-		<span>{{forloop.counter}}</span>
-		<span>{{team}}</span>
-		<span>{{scores.QS}}</span>
-		<span>{{scores.HP}}</span>
-		<span>{{scores.BP}}</span>
-		<span>{{scores.TP}}</span>
-		<span>{{scores.CP}}</span>
-		<span>({{scores.Wins}} - {{scores.Losses}} - {{scores.Ties}})</span>
-		<span>{{scores.DQ}}</span>
-		<span>{{scores.Played}}</span>
-	</li>
+	<tr id="team{{team}}">
+		<td>{{forloop.counter}}</td>
+		<td>{{team}}</td>
+		<td>{{scores.QS}}</td>
+		<td>{{scores.sum_auto_goal}}</td>
+		<td>{{scores.sum_teleop_points}}</td>
+		<td>{{scores.sum_climb_points}}</td>
+		<td>({{scores.Wins}} - {{scores.Losses}} - {{scores.Ties}})</td>
+		<td>{{scores.DQ}}</td>
+		<td>{{scores.Played}}</td>
+	</tr>
 {% endfor %}
-</ul>
+</table>
 
 
 {% endblock %}

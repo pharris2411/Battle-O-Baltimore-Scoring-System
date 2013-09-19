@@ -16,10 +16,9 @@ def calculate_rankings():
 	for team in teams:
 		rankings[team.number] = {
 			'QS': 0,
-			'HP': 0,
-			'BP': 0,
-			'TP': 0,
-			'CP': 0,
+			'sum_auto_goal': 0,
+			'sum_climb_points': 0,
+			'sum_teleop_points': 0, 
 			'Wins': 0,
 			'Losses': 0,
 			'Ties': 0,
@@ -42,9 +41,9 @@ def calculate_rankings():
 
 
 	def add_all(rankings, match, scoring, team):
-		rankings[team]['HP'] += scoring.score_hybrid()
-		rankings[team]['TP'] += scoring.score_tele()
-		rankings[team]['BP'] += scoring.score_bridge()
+		rankings[team]['sum_auto_goal'] += scoring.score_hybrid()
+		rankings[team]['sum_teleop_points'] += scoring.score_tele()
+		rankings[team]['sum_climb_points'] += scoring.score_climb()
 
 		rankings[team]['Played'] += 1
 
@@ -97,24 +96,24 @@ def calculate_rankings():
 		if blue.team3: 
 			add_all(rankings, match, blue, blue.team3.number)
 
-		if red.coop and blue.coop:
-			rankings[red.team1.number]['CP'] += 2
-			rankings[red.team2.number]['CP'] += 2
-			if red.team3:
-				rankings[red.team3.number]['CP'] += 2
-			rankings[blue.team1.number]['CP'] += 2
-			rankings[blue.team2.number]['CP'] += 2
-			if blue.team3:
-				rankings[blue.team3.number]['CP'] += 2
+		# if red.coop and blue.coop:
+		# 	rankings[red.team1.number]['CP'] += 2
+		# 	rankings[red.team2.number]['CP'] += 2
+		# 	if red.team3:
+		# 		rankings[red.team3.number]['CP'] += 2
+		# 	rankings[blue.team1.number]['CP'] += 2
+		# 	rankings[blue.team2.number]['CP'] += 2
+		# 	if blue.team3:
+		# 		rankings[blue.team3.number]['CP'] += 2
 
-			rankings[red.team1.number]['QS'] += 2
-			rankings[red.team2.number]['QS'] += 2
-			if red.team3:
-				rankings[red.team3.number]['QS'] += 2
-			rankings[blue.team1.number]['QS'] += 2
-			rankings[blue.team2.number]['QS'] += 2
-			if blue.team3:
-				rankings[blue.team3.number]['QS'] += 2
+		# 	rankings[red.team1.number]['QS'] += 2
+		# 	rankings[red.team2.number]['QS'] += 2
+		# 	if red.team3:
+		# 		rankings[red.team3.number]['QS'] += 2
+		# 	rankings[blue.team1.number]['QS'] += 2
+		# 	rankings[blue.team2.number]['QS'] += 2
+		# 	if blue.team3:
+		# 		rankings[blue.team3.number]['QS'] += 2
 
 
 
@@ -131,19 +130,19 @@ def calculate_rankings():
 		if x['QS'] > y['QS']:
 			return -1
 
-		if x['HP'] < y['HP']:
+		if x['sum_auto_goal'] < y['sum_auto_goal']:
 			return 1
-		if x['HP'] > y['HP']:
+		if x['sum_auto_goal'] > y['sum_auto_goal']:
 			return -1
 
-		if x['BP'] < y['BP']:
+		if x['sum_climb_points'] < y['sum_climb_points']:
 			return 1
-		if x['BP'] > y['BP']:
+		if x['sum_climb_points'] > y['sum_climb_points']:
 			return -1
 
-		if x['TP'] < y['TP']:
+		if x['sum_teleop_points'] < y['sum_teleop_points']:
 			return 1
-		if x['TP'] > y['TP']:
+		if x['sum_teleop_points'] > y['sum_teleop_points']:
 			return -1
 
 		return 0
@@ -342,6 +341,20 @@ def matchlist_print(request):
 	matchlist = Match.objects.filter(finals_match = False)
 	return render_to_response('matchlist_print.html', {"matchlist": matchlist})
 
+def first_matchlist(request):
+	matchlist = Match.objects.filter(finals_match = False)
+	finals_bracket = calculate_finals(initialize = False, show_next_matches = True)
+	highest_played_match = 0
+	for match in matchlist:
+		if match.played:
+			highest_played_match = match.number
+
+	return render_to_response('first_format_matchlist.html', {"matchlist": matchlist, "bracket": finals_bracket, "highest_played_match": highest_played_match})
+
+def first_rankings(request):
+	rankings = calculate_rankings()
+	return render_to_response('first_format_rankings.html', {"rankings": rankings})
+
 def finals_bracket(request):
 	bracket = calculate_finals()
 	return render_to_response('finals_bracket.html', {"bracket": bracket})
@@ -451,9 +464,11 @@ def edit_match_scoring(request, matchid, side):
 		scores.tele_mid = int(request.POST['tele_midl']) + int(request.POST['tele_midr'])
 		scores.tele_low = int(request.POST['tele_low'])
 
-		scores.bridge = int(request.POST['bridge'])
-		scores.final_red_ball = int(request.POST['final_red_ball'])
-		scores.coop = (False, True)['coop' in request.POST]
+		scores.tele_pyramid = int(request.POST['tele_pyramid'])
+
+		scores.pyramid_level1 = int(request.POST['pyramid_level1'])
+		scores.pyramid_level2 = int(request.POST['pyramid_level2'])
+		scores.pyramid_level3 = int(request.POST['pyramid_level3'])
 
 		scores.submitted = True
 
@@ -652,7 +667,7 @@ def homepage(request):
 
 	if len(matches) > 0:
 		steps[2] = "complete"
-	elif step[1] == "current":
+	elif steps[1] == "current":
 		steps[2] = "todo"
 	else:
 		steps[2] = "current"

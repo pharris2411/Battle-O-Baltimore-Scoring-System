@@ -679,7 +679,7 @@
   }
 }
 
-@media (max-width: 979px) {
+@media (max-width: 1199px) {
   body {
     padding-top: 0;
   }
@@ -807,9 +807,22 @@
   }
 }
 
-@media (min-width: 980px) {
+@media (min-width: 1200px) {
   .nav-collapse.collapse {
     height: auto !important;
     overflow: visible !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .brand{
+    display:none !important;
+  }
+  .navbar-inner{
+    background: inherit !important;
+    box-shadow: none !important;
+  }
+  .nav-collapse, .nav-collapse.collapse{
+    background-color: #333;
   }
 }
